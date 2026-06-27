@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedInAdmin() {
+      return request.auth != null;
+    }
+
+    function isValidConsentFile() {
+      return request.resource != null
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches(
+          '^(application/pdf|image/(jpeg|png))$'
+        );
+    }
+
+    match /guardian-consents/{registrationId}/{fileName} {
+      allow create: if isValidConsentFile();
+      allow read, update, delete: if isSignedInAdmin();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
