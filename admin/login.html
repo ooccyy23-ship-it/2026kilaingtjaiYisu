@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>管理員登入｜青年領袖營</title>
+  <link rel="stylesheet" href="./login.css">
+</head>
+<body>
+  <main class="login-page">
+    <section class="login-card" aria-labelledby="loginTitle">
+      <a class="brand" href="../index.html" aria-label="返回營隊首頁">
+        <span class="brand-mark">YL</span>
+        <span>青年領袖營</span>
+      </a>
+
+      <div class="login-heading">
+        <p>ADMIN CONSOLE</p>
+        <h1 id="loginTitle">管理員登入</h1>
+        <span>請使用已授權的管理員帳號登入。</span>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <label>
+          <span>電子信箱</span>
+          <input id="email" name="email" type="email" autocomplete="username" placeholder="name@example.com" required>
+        </label>
+        <label>
+          <span>密碼</span>
+          <input id="password" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="請輸入密碼" required>
+        </label>
+
+        <p class="error-message" id="errorMessage" role="alert" aria-live="polite"></p>
+        <button id="loginButton" type="submit">
+          <span>登入後台</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      </form>
+
+      <a class="back-link" href="../index.html">← 返回活動網站</a>
+    </section>
+  </main>
+  <script type="module" src="./login.js"></script>
+</body>
+</html>
