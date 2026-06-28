@@ -30,7 +30,12 @@ const transportOtherField = document.querySelector("#transportOtherField");
 const diet = document.querySelector("#diet");
 const dietOther = document.querySelector("#dietOther");
 const dietOtherField = document.querySelector("#dietOtherField");
+const scheduleDialog = document.querySelector("#scheduleDialog");
+const scheduleDialogTitle = document.querySelector("#scheduleDialogTitle");
+const scheduleDialogDay = document.querySelector("#scheduleDialogDay");
+const scheduleDialogContent = document.querySelector("#scheduleDialogContent");
 const storageKey = "youth-leadership-camp-draft";
+let scheduleTrigger = null;
 
 document.addEventListener("scroll", () => {
   document.querySelector(".site-header").classList.toggle("scrolled", window.scrollY > 10);
@@ -337,6 +342,36 @@ function closeModal() {
 closeModalButton.addEventListener("click", closeModal);
 modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && !modal.hidden) closeModal(); });
+
+const scheduleTitles = {
+  1: { label: "DAY 1・7 / 12", title: "相遇・預備｜完整日程" },
+  2: { label: "DAY 2・7 / 13", title: "扎根・操練｜完整日程" },
+  3: { label: "DAY 3・7 / 14", title: "差遣・出發｜完整日程" },
+};
+
+document.querySelectorAll(".schedule-more").forEach(button => {
+  button.addEventListener("click", () => {
+    const day = button.dataset.scheduleDay;
+    const template = document.querySelector(`#fullScheduleDay${day}`);
+    if (!template) return;
+
+    scheduleTrigger = button;
+    scheduleDialogDay.textContent = scheduleTitles[day].label;
+    scheduleDialogTitle.textContent = scheduleTitles[day].title;
+    scheduleDialogContent.replaceChildren(template.content.cloneNode(true));
+    scheduleDialog.showModal();
+  });
+});
+
+function closeScheduleDialog() {
+  scheduleDialog.close();
+  scheduleTrigger?.focus();
+}
+
+document.querySelector("#closeScheduleDialog").addEventListener("click", closeScheduleDialog);
+scheduleDialog.addEventListener("click", event => {
+  if (event.target === scheduleDialog) closeScheduleDialog();
+});
 
 document.querySelectorAll(".faq-list details").forEach(item => {
   item.addEventListener("toggle", () => {
