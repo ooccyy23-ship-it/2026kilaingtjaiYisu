@@ -2,14 +2,15 @@ import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/1
 import { auth } from "../firebase.js";
 
 const loginForm = document.querySelector("#loginForm");
-const emailInput = document.querySelector("#email");
+const adminIdInput = document.querySelector("#adminId");
 const passwordInput = document.querySelector("#password");
 const loginButton = document.querySelector("#loginButton");
 const errorMessage = document.querySelector("#errorMessage");
+const adminEmailDomain = "admin.kilaingtjaiyisu2026.com";
 
 const authMessages = {
-  "auth/invalid-credential": "Email 或密碼不正確，請重新確認。",
-  "auth/invalid-email": "Email 格式不正確。",
+  "auth/invalid-credential": "管理員 ID 或密碼不正確，請重新確認。",
+  "auth/invalid-email": "管理員 ID 格式不正確。",
   "auth/missing-password": "請輸入密碼。",
   "auth/too-many-requests": "登入嘗試次數過多，請稍後再試。",
   "auth/network-request-failed": "網路連線失敗，請確認連線後再試。",
@@ -33,10 +34,10 @@ loginForm.addEventListener("submit", async event => {
   event.preventDefault();
 
   if (!loginForm.checkValidity()) {
-    [emailInput, passwordInput].forEach(input => {
+    [adminIdInput, passwordInput].forEach(input => {
       input.classList.toggle("invalid", !input.validity.valid);
     });
-    showError("請完整填寫有效的 Email 與密碼。");
+    showError("請輸入有效的管理員 ID 與密碼。");
     loginForm.reportValidity();
     return;
   }
@@ -45,9 +46,11 @@ loginForm.addEventListener("submit", async event => {
   showError("");
 
   try {
+    const adminEmail =
+      `${adminIdInput.value.trim().toLowerCase()}@${adminEmailDomain}`;
     await signInWithEmailAndPassword(
       auth,
-      emailInput.value.trim(),
+      adminEmail,
       passwordInput.value
     );
     window.location.replace("./index.html");
