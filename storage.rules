@@ -2,8 +2,9 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    function isSignedInAdmin() {
-      return request.auth != null;
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.admin == true;
     }
 
     function isValidConsentFile() {
@@ -16,7 +17,7 @@ service firebase.storage {
 
     match /guardian-consents/{registrationId}/{fileName} {
       allow create: if isValidConsentFile();
-      allow read, update, delete: if isSignedInAdmin();
+      allow read, update, delete: if isAdmin();
     }
 
     match /{allPaths=**} {

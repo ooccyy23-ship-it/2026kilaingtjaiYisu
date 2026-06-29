@@ -1,4 +1,7 @@
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import {
+  onAuthStateChanged,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 import {
   collection,
   deleteDoc,
@@ -21,6 +24,7 @@ const editDialog = document.querySelector("#editDialog");
 const editForm = document.querySelector("#editForm");
 const editMessage = document.querySelector("#editMessage");
 const saveEditButton = document.querySelector("#saveEdit");
+const logoutButton = document.querySelector("#logoutButton");
 const editFields = {
   documentId: document.querySelector("#editDocumentId"),
   camp: document.querySelector("#editCamp"),
@@ -407,6 +411,17 @@ document.querySelector("#closeEditDialog").addEventListener("click", closeEditDi
 document.querySelector("#cancelEdit").addEventListener("click", closeEditDialog);
 editDialog.addEventListener("click", event => {
   if (event.target === editDialog) closeEditDialog();
+});
+logoutButton.addEventListener("click", async () => {
+  logoutButton.disabled = true;
+  try {
+    await signOut(auth);
+    window.location.replace("./login.html");
+  } catch (error) {
+    console.error("登出失敗：", error);
+    window.alert("登出失敗，請稍後再試。");
+    logoutButton.disabled = false;
+  }
 });
 
 onAuthStateChanged(auth, async user => {

@@ -348,16 +348,29 @@ const scheduleTitles = {
   2: { label: "DAY 2・7 / 13", title: "扎根・操練｜完整日程" },
   3: { label: "DAY 3・7 / 14", title: "差遣・出發｜完整日程" },
 };
+const childScheduleTitles = {
+  1: { label: "DAY 1・7 / 27", title: "相遇・認識｜完整日程" },
+  2: { label: "DAY 2・7 / 28", title: "行動・操練｜完整日程" },
+  3: { label: "DAY 3・7 / 29", title: "分享・差遣｜完整日程" },
+};
 
 document.querySelectorAll(".schedule-more").forEach(button => {
   button.addEventListener("click", () => {
-    const day = button.dataset.scheduleDay;
-    const template = document.querySelector(`#fullScheduleDay${day}`);
+    const isChildSchedule = Boolean(button.dataset.childScheduleDay);
+    const day = isChildSchedule
+      ? button.dataset.childScheduleDay
+      : button.dataset.scheduleDay;
+    const template = document.querySelector(
+      isChildSchedule
+        ? `#childFullScheduleDay${day}`
+        : `#fullScheduleDay${day}`
+    );
     if (!template) return;
 
     scheduleTrigger = button;
-    scheduleDialogDay.textContent = scheduleTitles[day].label;
-    scheduleDialogTitle.textContent = scheduleTitles[day].title;
+    const titles = isChildSchedule ? childScheduleTitles : scheduleTitles;
+    scheduleDialogDay.textContent = titles[day].label;
+    scheduleDialogTitle.textContent = titles[day].title;
     scheduleDialogContent.replaceChildren(template.content.cloneNode(true));
     scheduleDialog.showModal();
   });

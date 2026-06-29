@@ -2,8 +2,9 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isSignedInAdmin() {
-      return request.auth != null;
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.admin == true;
     }
 
     function hasValidRegistrationFields() {
@@ -75,7 +76,7 @@ service cloud.firestore {
 
     match /registrations/{registrationId} {
       allow create: if hasValidRegistrationFields();
-      allow read, update, delete: if isSignedInAdmin();
+      allow read, update, delete: if isAdmin();
     }
 
     match /{document=**} {
