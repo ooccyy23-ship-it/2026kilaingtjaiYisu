@@ -153,7 +153,7 @@ function saveDraft() {
   localStorage.setItem(storageKey, JSON.stringify(data));
   saveStatus.textContent = "已自動暫存";
   clearTimeout(saveDraft.timer);
-  saveDraft.timer = setTimeout(() => saveStatus.textContent = "資料會暫存在這台裝置", 1600);
+  saveDraft.timer = setTimeout(() => saveStatus.textContent = "尚未送出", 1600);
 }
 
 function restoreDraft() {
