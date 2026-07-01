@@ -86,7 +86,8 @@ function updateGuardianRequirement() {
 function clearConsentFile() {
   consentFile.value = "";
   consentFile.classList.remove("invalid");
-  document.querySelector("#fileStatus").textContent = "支援 PDF、JPG、PNG";
+  document.querySelector("#fileStatus").textContent =
+    "支援 PDF、JPG、PNG，檔案須小於 10 MB";
 }
 
 function toggleOtherField(select, field, input) {
@@ -201,6 +202,7 @@ function validateForm() {
   });
   if (!validateEmail(true)) valid = false;
   if (!validateNationalId(true)) valid = false;
+  if (!validateConsentFile()) valid = false;
   form.querySelector('[data-error-for="form"]').textContent =
     valid ? "" : "還有欄位需要確認，已為你標示出來。";
   if (!valid) form.reportValidity();
@@ -222,6 +224,55 @@ function sanitizeFileName(fileName) {
     .normalize("NFKC")
     .replace(/[^a-zA-Z0-9._-]/g, "_")
     .slice(-100);
+}
+
+function getConsentContentType(file) {
+  if (file.type) return file.type;
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  return {
+    pdf: "application/pdf",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+  }[extension] || "";
+}
+
+function validateConsentFile() {
+  const file = consentFile.files[0];
+  if (!file) {
+    consentFile.setCustomValidity("");
+    return true;
+  }
+
+  const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+  let message = "";
+  if (!allowedTypes.includes(getConsentContentType(file))) {
+    message = "檔案格式不支援，請上傳 PDF、JPG 或 PNG；iPhone HEIC 照片請先轉成 JPG。";
+  } else if (file.size >= 10 * 1024 * 1024) {
+    message = "檔案超過 10 MB，請壓縮後重新上傳。";
+  }
+
+  consentFile.setCustomValidity(message);
+  consentFile.classList.toggle("invalid", Boolean(message));
+  document.querySelector("#fileStatus").textContent = message || `已選擇：${file.name}`;
+  return !message;
+}
+
+function getSubmitErrorMessage(error) {
+  const code = error?.code || "";
+  if (code.includes("unauthorized") || code.includes("permission-denied")) {
+    return "資料送出失敗：系統權限設定尚未開放，請聯絡主辦單位。";
+  }
+  if (code.includes("quota-exceeded")) {
+    return "資料送出失敗：系統儲存空間已達上限，請聯絡主辦單位。";
+  }
+  if (code.includes("retry-limit-exceeded") || code.includes("unavailable")) {
+    return "資料送出失敗：連線暫時不穩定，請稍後再試。";
+  }
+  if (code.includes("network-request-failed")) {
+    return "資料送出失敗：請確認手機網路連線後再試一次。";
+  }
+  return "資料送出失敗，請稍後再試；若持續發生，請聯絡主辦單位。";
 }
 
 function setSubmitting(isSubmitting) {
@@ -273,9 +324,14 @@ form.addEventListener("input", event => {
 });
 
 consentFile.addEventListener("change", () => {
-  document.querySelector("#fileStatus").textContent = consentFile.files[0]
-    ? `已選擇：${consentFile.files[0].name}`
-    : "支援 PDF、JPG、PNG";
+  if (!consentFile.files[0]) {
+    consentFile.setCustomValidity("");
+    consentFile.classList.remove("invalid");
+    document.querySelector("#fileStatus").textContent =
+      "支援 PDF、JPG、PNG，檔案須小於 10 MB";
+    return;
+  }
+  validateConsentFile();
 });
 
 form.addEventListener("submit", async event => {
@@ -302,7 +358,9 @@ form.addEventListener("submit", async event => {
       const storagePath =
         `guardian-consents/${registrationRef.id}/${Date.now()}-${fileName}`;
       uploadedFileRef = ref(storage, storagePath);
-      await uploadBytes(uploadedFileRef, file, { contentType: file.type });
+      await uploadBytes(uploadedFileRef, file, {
+        contentType: getConsentContentType(file),
+      });
       registrationData.hasGuardianConsent = true;
       registrationData.guardianConsentPath = storagePath;
     }
@@ -329,7 +387,7 @@ form.addEventListener("submit", async event => {
       }
     }
     form.querySelector('[data-error-for="form"]').textContent =
-      "資料送出失敗，請確認網路連線後再試一次。";
+      getSubmitErrorMessage(error);
   } finally {
     setSubmitting(false);
   }

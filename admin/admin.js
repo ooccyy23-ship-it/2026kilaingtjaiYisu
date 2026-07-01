@@ -250,33 +250,37 @@ function serializeExcelValue(value) {
 function exportCompleteRegistrations() {
   if (registrationRecords.length === 0) return;
 
-  const exportData = registrationRecords.map(({ id, data }) => {
-    const {
-      nationalId,
-      idNumber,
-      identityNumber,
-      ...remainingData
-    } = data;
-    const completeData = Object.fromEntries(
-      Object.entries(remainingData).map(([key, value]) => [
-        key,
-        serializeExcelValue(value),
-      ])
-    );
-
-    return {
-      文件ID: id,
-      身分證字號: nationalId ?? idNumber ?? identityNumber ?? "",
-      ...completeData,
-    };
-  });
+  const exportData = registrationRecords.map(({ data }) => ({
+    建立時間: serializeExcelValue(
+      data.createdAt ?? data.registrationDate ?? data.submittedAt
+    ),
+    報名營隊: serializeExcelValue(data.camp),
+    姓名: serializeExcelValue(data.name),
+    性別: serializeExcelValue(data.gender),
+    身分證字號: serializeExcelValue(
+      data.nationalId ?? data.idNumber ?? data.identityNumber
+    ),
+    出生年月日: serializeExcelValue(data.birthDate),
+    系統計算年齡: serializeExcelValue(
+      data.age ?? calculateAge(data.birthDate)
+    ),
+    住址: serializeExcelValue(data.address),
+    電話: serializeExcelValue(data.phone),
+    電子信箱: serializeExcelValue(data.email),
+    教會名稱: serializeExcelValue(data.church),
+    接送需求: serializeExcelValue(data.transport),
+    其他接送需求: serializeExcelValue(data.transportOther),
+    飲食需求: serializeExcelValue(data.diet),
+    其他飲食需求: serializeExcelValue(data.dietOther),
+    衣服尺寸: serializeExcelValue(data.shirtSize),
+  }));
 
   const worksheet = utils.json_to_sheet(exportData);
   const workbook = utils.book_new();
   utils.book_append_sheet(workbook, worksheet, "報名資料");
 
   const date = new Intl.DateTimeFormat("sv-SE").format(new Date());
-  writeFileXLSX(workbook, `青年領袖營報名資料_${date}.xlsx`);
+  writeFileXLSX(workbook, `Kilaing_tjai_Yisu_系列活動報名資料_${date}.xlsx`);
 }
 
 function openEditDialog(documentId) {
