@@ -84,6 +84,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .camp-info-card h3 { margin: 10px 0 15px; font: 800 24px Outfit,"Noto Sans TC"; }
 .camp-info-card dl { margin: 0; }.camp-info-card dl>div { display: grid; grid-template-columns: 48px 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: var(--text-small); }
 .camp-info-card dt { color: var(--muted); }.camp-info-card dd { margin: 0; font-weight: 600; }
+.map-link { width:fit-content; display:flex; align-items:center; gap:5px; margin-top:7px; color:#285f80; font-size:14px; font-weight:500; text-decoration:none; transition:color .2s ease; }
+.map-link span { transition:transform .2s ease; }
+.map-link:hover { color:#174968; text-decoration:underline; }
+.map-link:hover span { transform:translateX(2px); }
 .theme-row { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }.theme-row span { padding: 6px 10px; border-radius: 20px; background: #edf4ff; font-size: 13px; font-weight: 700; }
 .section { padding: 105px max(22px, calc((100vw - 1180px)/2)); }
 .section-heading { display: grid; grid-template-columns: 1.35fr .65fr; gap: 80px; align-items: end; margin-bottom: 55px; }

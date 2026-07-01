@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./site.webmanifest">
+  <meta name="theme-color" content="#4F6B45">
   <title>Kilaing tjai Yisu｜2026 第五屆 作和平的使者</title>
   <meta name="description" content="Kilaing tjai Yisu 為排灣族語，意為「向耶穌學習」，也蘊含著「學習像耶穌」的信念。2026 年度系列活動包含青年領袖輔導培訓營與日光暑期兒童營。">
   <link rel="canonical" href="https://kilaingtjaiyisu2026.netlify.app/">
@@ -37,10 +41,10 @@
       </span>
     </a>
     <nav class="desktop-nav" aria-label="主要導覽">
-      <a href="#youth-camp">青年營</a>
-      <a href="#child-camp">兒童營</a>
-      <a href="#about">培訓主題</a>
-      <a href="#schedule">活動行程</a>
+      <a href="#youth-camp">青年領袖營</a>
+      <a href="#child-camp">日光兒童營</a>
+      <a href="#about">培訓內容</a>
+      <a href="#schedule">活動日程</a>
       <a href="#contact">聯絡我們</a>
     </nav>
     <a class="button button-small" href="#register">我要報名</a>
@@ -66,7 +70,7 @@
             <h3>7/12（日）– 7/14（二）</h3>
             <dl>
               <div><dt>地點</dt><dd>臺東知本踢踏民宿</dd></div>
-              <div><dt>地址</dt><dd>臺東縣臺東市知本路二段292巷139號</dd></div>
+              <div><dt>地址</dt><dd>臺東縣臺東市知本路二段292巷139號<a class="map-link" data-map-location="youth" target="_blank" rel="noopener noreferrer">在 Google Maps 開啟 <span aria-hidden="true">→</span></a></dd></div>
               <div><dt>對象</dt><dd>15 歲以上青少年及社青</dd></div>
               <div><dt>截止</dt><dd>線上報名至7/6(一)晚上12時止</dd></div>
               <div><dt>備註</dt><dd>完成青年領袖培訓後，將在暑期兒童營擔任營隊同工；報名前請預留兩段活動時間。</dd></div>
@@ -77,7 +81,7 @@
             <h3>7/27（一）– 7/29（三）</h3>
             <dl>
               <div><dt>地點</dt><dd>基督教中華循理會台東教會</dd></div>
-              <div><dt>地址</dt><dd>臺東縣卑南鄉泰安村東園一街27號</dd></div>
+              <div><dt>地址</dt><dd>臺東縣卑南鄉泰安村東園一街27號<a class="map-link" data-map-location="child" target="_blank" rel="noopener noreferrer">在 Google Maps 開啟 <span aria-hidden="true">→</span></a></dd></div>
               <div><dt>對象</dt><dd>各教會國小升三年級至升國一生</dd></div>
               <div><dt>費用</dt><dd>報名費300 元，報到時現場繳交</dd></div>
               <div><dt>截止</dt><dd>線上報名至7/20(一)晚上12時止</dd></div>
@@ -476,6 +480,7 @@
   <div class="success-modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle" hidden>
     <div class="modal-card"><div class="success-icon">✓</div><p class="eyebrow">REGISTRATION COMPLETE</p><h2 id="successTitle">報名資料已送出！</h2><p id="successMessage">主辦單位將依填寫資料與你聯繫。</p><button class="button" type="button" id="closeModal">知道了</button></div>
   </div>
+  <script src="./map-links.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>
