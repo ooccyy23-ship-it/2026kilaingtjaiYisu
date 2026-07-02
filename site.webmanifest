@@ -1,0 +1,8 @@
+{
+  "name": "Kilaing tjai Yisu",
+  "short_name": "KTY",
+  "theme_color": "#4F6B45",
+  "background_color": "#F7F4EE",
+  "display": "standalone",
+  "start_url": "./"
+}

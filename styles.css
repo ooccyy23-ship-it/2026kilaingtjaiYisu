@@ -89,7 +89,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .map-link:hover { color:#174968; text-decoration:underline; }
 .map-link:hover span { transform:translateX(2px); }
 .theme-row { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }.theme-row span { padding: 6px 10px; border-radius: 20px; background: #edf4ff; font-size: 13px; font-weight: 700; }
-.section { padding: 105px max(22px, calc((100vw - 1180px)/2)); }
+.section { padding: 105px max(22px, calc((100% - 1180px)/2)); }
 .section-heading { display: grid; grid-template-columns: 1.35fr .65fr; gap: 80px; align-items: end; margin-bottom: 55px; }
 .section-heading h2,.faq-title h2,.form-intro h2 { font-size: clamp(34px, 3.5vw, 52px); letter-spacing: -.04em; line-height: 1.25; margin: 0; }
 .section-heading>p { color: var(--muted); margin: 0 0 8px; }
@@ -129,7 +129,7 @@ input:focus,select:focus,textarea:focus { border-color: var(--green); box-shadow
 .submit-button { width: 100%; margin-top: 16px; }.form-note { text-align: center; color: var(--muted); font-size: var(--text-caption); margin: 9px 0 0; }
 .faq-section { display: grid; grid-template-columns: .65fr 1.35fr; gap: 100px; }.faq-title { position: sticky; top: 120px; align-self: start; }.faq-title>p:last-child { color: var(--muted); font-size: 14px; }
 details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-child { border-bottom: 1px solid var(--line); }summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 20px; font-weight: 700; }summary::-webkit-details-marker { display:none; }summary span { font-size: 23px; font-weight: 400; transition: transform .2s; }details[open] summary span { transform: rotate(45deg); }details p { color: var(--muted); font-size: 14px; padding-right: 35px; margin-bottom: 0; }
-.site-footer { padding:52px max(36px,calc((100vw - 1180px)/2)) 24px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(40px,5vw,72px); color:#fff8ec; background:linear-gradient(135deg,#173f55 0%,#1b4961 52%,#12364b 100%); border-top:4px solid #d3a247; font-size:var(--text-small); }
+.site-footer { padding:52px max(36px,calc((100% - 1180px)/2)) 24px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(40px,5vw,72px); color:#fff8ec; background:linear-gradient(135deg,#173f55 0%,#1b4961 52%,#12364b 100%); border-top:4px solid #d3a247; font-size:var(--text-small); }
 .footer-column { min-width:0; display:flex; flex-direction:column; align-items:flex-start; text-align:left; }
 .footer-column>strong { margin-bottom:18px; color:#d3a247; font-size:15px; letter-spacing:.08em; }
 .footer-brand { display:inline-flex; align-items:center; gap:14px; }
@@ -199,6 +199,33 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .schedule-glow-blue { width: 330px; height: 330px; left: -130px; top: 90px; background: rgba(143,211,255,.3); }
 .schedule-glow-gold { width: 360px; height: 360px; right: -140px; top: 32%; background: rgba(255,220,130,.28); }
 .schedule-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; position: relative; z-index: 1; align-items: stretch; }
+.schedule-camp-grid { max-width:1000px; margin:0 auto; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; position:relative; z-index:1; }
+.schedule-camp-card { min-width:0; padding:26px; display:flex; flex-direction:column; border:1px solid var(--line); border-top:5px solid #34778a; border-radius:22px; background:white; box-shadow:0 16px 44px rgba(36,72,67,.1); }
+.schedule-camp-child { border-top-color:#d88a35; }
+.schedule-camp-tag { width:fit-content; padding:4px 10px; border-radius:99px; color:#285f70; background:#e4f0ef; font-size:12px; font-weight:800; }
+.schedule-camp-child .schedule-camp-tag { color:#9b5b1f; background:#fff0dd; }
+.schedule-camp-description { margin:14px 0 0; color:var(--muted); font-size:14px; font-weight:600; }
+.schedule-camp-date { margin:7px 0 0; color:#285f70; font-size:clamp(21px,2vw,27px); font-weight:800; }
+.schedule-camp-child .schedule-camp-date { color:#b86f27; }
+.schedule-camp-card ol { margin:24px 0 26px; padding:0; display:grid; gap:12px; list-style:none; }
+.schedule-camp-card li { min-width:0; padding:14px 16px; display:grid; grid-template-columns:34px 55px minmax(0,.8fr) minmax(0,1.25fr); gap:10px; align-items:center; border-radius:14px; background:#eef7f6; }
+.schedule-camp-card li>* { min-width:0; }
+.schedule-camp-child li { background:#fff6eb; }
+.schedule-camp-card li::before { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; color:#fff; background:#34778a; box-shadow:0 5px 12px rgba(52,119,138,.2); font-size:14px; font-weight:800; }
+.schedule-camp-card li:nth-child(1)::before { content:"☀"; }
+.schedule-camp-card li:nth-child(2)::before { content:"✦"; }
+.schedule-camp-card li:nth-child(3)::before { content:"↗"; }
+.schedule-camp-child li::before { color:#fffaf2; background:#d88a35; box-shadow:0 5px 12px rgba(216,138,53,.22); }
+.schedule-camp-card li strong { color:#285f70; font:700 13px Outfit; letter-spacing:.04em; }
+.schedule-camp-child li strong { color:#b86f27; }
+.schedule-camp-card li span { color:var(--ink); font-weight:700; }
+.schedule-camp-card li small { color:var(--muted); font-size:12px; line-height:1.65; }
+.schedule-camp-link { width:fit-content; margin-top:auto; padding:12px 22px; display:inline-flex; align-items:center; gap:7px; border:1px solid #34778a; border-radius:999px; color:#285f80; background:transparent; font-size:15px; font-weight:500; cursor:pointer; text-decoration:none; transition:color .2s ease,background .2s ease; }
+.schedule-camp-child .schedule-camp-link { color:#a45f20; border-color:#d88a35; }
+.schedule-camp-link span { transition:transform .2s ease; }
+.schedule-camp-link:hover { color:#174968; background:#eef7f6; }
+.schedule-camp-child .schedule-camp-link:hover { color:#884915; background:#fff6eb; }
+.schedule-camp-link:hover span { transform:translateX(2px); }
 .day-card { min-height: 610px; overflow: hidden; display:flex; flex-direction:column; border: 1px solid rgba(255,255,255,.9); border-radius: 25px; background: rgba(255,255,255,.92); box-shadow: 0 20px 60px rgba(30,95,140,.12); }
 .day-card::before { content:""; display:block; height:6px; background: linear-gradient(90deg,#39a8ee,#245fbd); }
 .day-two::before { background: linear-gradient(90deg,#f2bf42,#ef8738); }
@@ -222,13 +249,15 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .schedule-more { margin:0 22px 22px; min-height:42px; display:flex; align-items:center; justify-content:space-between; padding:9px 14px; border:1px solid #c6deee; border-radius:10px; color:var(--green); background:white; font:700 13px "Noto Sans TC"; cursor:pointer; transition:.2s; }
 .schedule-more:hover { color:white; border-color:var(--green); background:var(--green); transform:translateY(-1px); }
 .schedule-note { margin:28px 0 0; position:relative; z-index:1; color:#758599; text-align:center; font-size:var(--text-caption); }
-.schedule-dialog { width:min(720px,calc(100% - 30px)); max-height:calc(100vh - 40px); padding:0; border:0; border-radius:22px; color:var(--ink); background:white; box-shadow:0 30px 90px rgba(14,55,90,.28); }
+.schedule-dialog { width:min(720px,calc(100% - 30px)); max-height:calc(100vh - 40px); overflow:auto; padding:0; border:0; border-radius:22px; color:var(--ink); background:white; box-shadow:0 30px 90px rgba(14,55,90,.28); }
 .schedule-dialog::backdrop { background:rgba(9,39,65,.68); backdrop-filter:blur(5px); }
 .schedule-dialog-card { padding:clamp(24px,4vw,38px); }
 .schedule-dialog-card>header { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; padding-bottom:20px; border-bottom:1px solid var(--line); }
 .schedule-dialog-card h2 { margin:0; font-size:28px; }
 .schedule-dialog-card>header button { width:36px; height:36px; border:0; border-radius:50%; color:var(--muted); background:#edf3f7; font-size:23px; cursor:pointer; }
 .schedule-dialog-content { margin-top:22px; }
+.camp-full-day+.camp-full-day { margin-top:28px; padding-top:28px; border-top:1px solid var(--line); }
+.camp-full-day h3 { margin:0 0 14px; color:#285f70; font-size:18px; }
 .schedule-dialog-card>p { margin:18px 0 0; color:var(--muted); text-align:center; font-size:var(--text-caption); }
 .full-schedule-list { margin:0; padding:0; list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; }
 .full-schedule-list li { min-width:0; display:grid; grid-template-columns:78px 28px 1fr; align-items:start; gap:8px; padding:9px; border:1px solid #e5edf2; border-radius:11px; background:#f9fbfc; }
@@ -260,11 +289,19 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .copyright { grid-column:1/-1; margin:4px 0 0; padding-top:20px; border-top:1px solid rgba(211,162,71,.22); color:#9fb2b8; text-align:center; font-size:var(--text-caption); }
 .success-modal { position: fixed; inset: 0; z-index: 50; background: rgba(10,34,28,.7); display: grid; place-items: center; padding: 20px; backdrop-filter: blur(5px); }.success-modal[hidden] { display:none; }.modal-card { max-width: 440px; background: var(--paper); border-radius: 20px; padding: 45px; text-align: center; box-shadow: var(--shadow); }.success-icon { width: 58px; height: 58px; margin: 0 auto 20px; display:grid; place-items:center; border-radius:50%; background: var(--lime); font-size: 27px; }.modal-card h2 { margin: 5px 0 10px; line-height:1.35; }.modal-card>p:not(.eyebrow) { color:var(--muted); }.modal-card .button { margin-top:15px; width:100%; }
 @media (max-width: 900px) {
-  .desktop-nav { display:none; }.quick-facts { margin-inline:22px; grid-template-columns:1fr 1fr; }.quick-facts>div { padding:14px; }.quick-facts>div:nth-child(2) { border-right:0; }.quick-facts>div:nth-child(-n+2) { border-bottom:1px solid var(--line); }
+  .desktop-nav { display:none; }.schedule-camp-card li { grid-template-columns:34px 55px 1fr; }.schedule-camp-card li small { grid-column:3; }.quick-facts { margin-inline:22px; grid-template-columns:1fr 1fr; }.quick-facts>div { padding:14px; }.quick-facts>div:nth-child(2) { border-right:0; }.quick-facts>div:nth-child(-n+2) { border-bottom:1px solid var(--line); }
   .section-heading,.register-section,.faq-section { grid-template-columns:1fr; gap:45px; }.feature-grid,.feature-grid.training-grid,.journey-grid { grid-template-columns:1fr 1fr; }.camp-info-grid { grid-template-columns:1fr; max-width:680px; margin-inline:auto; }.schedule-grid { grid-template-columns:1fr; max-width:620px; margin-inline:auto; }.day-card { min-height:auto; }.steps { grid-template-columns:1fr 1fr; gap:28px; }.steps li::after { display:none; }.form-intro,.faq-title { position:static; }
 }
 @media (max-width: 768px) {
-  main,footer,.site-header,.hero,.section,.poster-section,.register-section,.registration-form,.contact-card,.journey-card,.day-card { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+  .site-header,main,section,footer,.hero,.poster-details,.camp-info-grid,.camp-info-card,.journey-grid,.schedule-camp-grid,.schedule-camp-card,.register-section,.registration-form { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+  img,.hero-main-image { width:100%; max-width:100%; height:auto; display:block; }
+  h1,h2,h3,p,a,span,dd,dt,small,strong { overflow-wrap:anywhere; word-break:normal; }
+  .brand-copy strong,.brand-copy small { white-space:normal; }
+  .poster-details h2 { max-width:100%; font-size:clamp(32px,9vw,40px); line-height:1.2; overflow-wrap:anywhere; }
+  .poster-section,.schedule-section,.story-section,.hero { overflow:hidden; }
+  .hero-image-actions { right:auto; max-width:100%; }
+  .schedule-glow-blue,.schedule-glow-gold,.story-section::before,.story-section::after { max-width:100%; }
+  .schedule-camp-grid { grid-template-columns:1fr; }
   .contact-card { grid-template-columns:84px minmax(0,1fr); gap:12px; padding:12px; }
   .contact-card>img { width:84px; }
   .contact-card a { font-size:18px; }
@@ -272,10 +309,11 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
   .schedule-dialog,.success-modal .modal-card { max-width:calc(100vw - 30px); }
 }
 @media (max-width: 600px) {
-  .site-header { height:72px; padding-inline:12px; }.brand { gap:8px; }.brand-logo { width:44px; height:44px; }.brand-copy strong { font-size:13px; }.brand-copy small { margin-top:1px; font-size:8px; letter-spacing:0; }.site-header .button-small { padding:8px 10px; font-size:12px; }.quick-facts { grid-template-columns:1fr; margin-bottom:65px; }.quick-facts>div { justify-content:flex-start; padding-left:25px; border-right:0; border-bottom:1px solid var(--line); }.quick-facts>div:nth-child(3) { border-bottom:1px solid var(--line); }
+  .site-header { height:72px; padding-inline:12px; }.brand { gap:8px; }.brand-logo { width:44px; height:44px; flex:0 0 44px; }.brand-copy { max-width:130px; }.brand-copy strong { font-size:13px; }.brand-copy small { margin-top:1px; font-size:8px; letter-spacing:0; }.site-header .button-small { flex:0 0 auto; padding:8px 10px; font-size:12px; }.site-footer { padding-inline:22px; }.quick-facts { grid-template-columns:1fr; margin-bottom:65px; }.quick-facts>div { justify-content:flex-start; padding-left:25px; border-right:0; border-bottom:1px solid var(--line); }.quick-facts>div:nth-child(3) { border-bottom:1px solid var(--line); }
   .poster-frame { display:none; }
   .section { padding-top:75px; padding-bottom:75px; }.poster-section { padding-top:30px; }.section-heading { margin-bottom:35px; }.feature-grid,.feature-grid.training-grid,.journey-grid { grid-template-columns:1fr; }.journey-grid { max-width:420px; margin-inline:auto; }.feature-card:last-child { grid-column:auto; }.feature-card { min-height:350px; }.steps { grid-template-columns:1fr; }.session-options,.field-grid { grid-template-columns:1fr; }.field.full { grid-column:auto; }.registration-form { margin-inline:0; }.form-top { display:block; }.save-status { display:inline-block; margin-top:10px; }.faq-section { gap:28px; }.site-footer { grid-template-columns:1fr; gap:34px; }.footer-nav-column,.footer-contact-column { padding-top:0; }
-  .full-schedule-list { grid-template-columns:1fr; }
+  .full-schedule-list,.schedule-camp-grid { grid-template-columns:1fr; }
+  .schedule-camp-card { padding:24px; }
   .series-card-grid { grid-template-columns:1fr; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none!important; } }
