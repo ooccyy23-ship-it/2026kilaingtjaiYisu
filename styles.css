@@ -37,6 +37,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .site-header .button-small { color:#fffdf7; background:#586b3f; box-shadow:0 8px 20px rgba(71,88,49,.18); }
 .site-header .button-small:hover { background:#445531; box-shadow:0 11px 24px rgba(71,88,49,.24); }
 .hero { width:100%; max-width:100%; min-height:0; padding:0; display:block; position:relative; overflow:hidden; background:#fbf8ef; }
+.hero-picture { width:100%; max-width:100%; min-width:0; display:block; overflow:hidden; }
+.hero-picture img { width:100%; max-width:100%; min-width:0; height:auto; display:block; }
 .hero-main-image { width:100%; height:auto; display:block; object-fit:contain; object-position:center; }
 .hero-image-actions { width:35.8%; height:8.8%; display:grid; grid-template-columns:1fr 1fr; gap:6.2%; position:absolute; left:34.9%; top:73%; }
 .hero-image-actions a { display:block; border-radius:8px; }
@@ -121,8 +123,8 @@ fieldset { border: 0; padding: 0; margin: 0 0 27px; } legend,.field>span { font-
 .session-card>span::after { content: ""; position: absolute; right: 14px; top: 14px; width: 15px; height: 15px; border-radius: 50%; border: 1px solid #9da8a3; }
 .session-card input:checked+span { border-color: var(--green); background: #f2f7e9; box-shadow: inset 0 0 0 1px var(--green); }.session-card input:checked+span::after { border: 4px solid var(--green); }
 .session-card b,.session-card strong,.session-card small { display: block; }.session-card b { font-size: var(--text-caption); color: var(--green); }.session-card strong { font-size: var(--text-body); margin: 4px 0; }.session-card i { font-style: normal; font-size: var(--text-caption); font-weight: 500; }.session-card small { color: var(--muted); font-size: var(--text-caption); }
-.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 19px 14px; }.field { display: flex; flex-direction: column; }.field.full { grid-column: 1/-1; }.field em { float: right; font-style: normal; font-weight: 400; color: var(--muted); font-size: var(--text-caption); }
-input,select,textarea { width: 100%; border: 1px solid #d3d8d2; background: white; border-radius: 8px; padding: 12px 13px; color: var(--ink); outline: none; transition: .2s; }
+.field-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 19px 14px; }.field { min-width:0; display: flex; flex-direction: column; }.field.full { grid-column: 1/-1; }.field em { float: right; font-style: normal; font-weight: 400; color: var(--muted); font-size: var(--text-caption); }
+input,select,textarea { width:100%; max-width:100%; min-width:0; border: 1px solid #d3d8d2; background: white; border-radius: 8px; padding: 12px 13px; color: var(--ink); outline: none; transition: .2s; }
 input:focus,select:focus,textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(39,107,85,.1); } textarea { resize: vertical; }
 .invalid { border-color: #bd5143 !important; background: #fff9f8; }.check-field { display: flex; align-items: flex-start; gap: 9px; margin: 24px 0 0; font-size: 13px; color: var(--muted); cursor: pointer; }.check-field input { width: 16px; margin-top: 5px; accent-color: var(--green); }
 .field-error { min-height: 0; margin: 5px 0 0; color: #b33d31; font-size: var(--text-caption); }.field-error:not(:empty) { min-height: 18px; }
@@ -294,22 +296,33 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 }
 @media (max-width: 768px) {
   .site-header,main,section,footer,.hero,.poster-details,.camp-info-grid,.camp-info-card,.journey-grid,.schedule-camp-grid,.schedule-camp-card,.register-section,.registration-form { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
-  img,.hero-main-image { width:100%; max-width:100%; height:auto; display:block; }
+  .section { padding-left:20px; padding-right:20px; }
+  img,.hero-main-image,.hero-picture img { width:100%; max-width:100%; height:auto; display:block; }
   h1,h2,h3,p,a,span,dd,dt,small,strong { overflow-wrap:anywhere; word-break:normal; }
   .brand-copy strong,.brand-copy small { white-space:normal; }
-  .poster-details h2 { max-width:100%; font-size:clamp(32px,9vw,40px); line-height:1.2; overflow-wrap:anywhere; }
+  .section h2,.poster-details h2,.schedule-heading h2 { max-width:100%; font-size:clamp(30px,8vw,42px); line-height:1.2; overflow-wrap:anywhere; }
   .poster-section,.schedule-section,.story-section,.hero { overflow:hidden; }
-  .hero-image-actions { right:auto; max-width:100%; }
+  .hero { margin-bottom:0; }
+  .poster-section { padding-top:32px; }
+  .hero-image-actions { width:42%; height:13.1%; display:grid; grid-template-columns:1fr; grid-template-rows:repeat(2,1fr); gap:9.5%; left:29%; right:auto; top:66.7%; max-width:100%; }
   .schedule-glow-blue,.schedule-glow-gold,.story-section::before,.story-section::after { max-width:100%; }
-  .schedule-camp-grid { grid-template-columns:1fr; }
+  .camp-info-grid,.schedule-camp-grid { grid-template-columns:1fr; gap:24px; }
+  .camp-info-card,.journey-card,.schedule-camp-card,.feature-card,.day-card,.contact-card,.registration-form,.modal-card { width:100%; max-width:100%; min-width:0; }
+  .button:not(.button-small) { min-height:56px; font-size:18px; }
   .contact-card { grid-template-columns:84px minmax(0,1fr); gap:12px; padding:12px; }
   .contact-card>img { width:84px; }
   .contact-card a { font-size:18px; }
   .registration-form { margin-inline:0; }
-  .schedule-dialog,.success-modal .modal-card { max-width:calc(100vw - 30px); }
+  .site-footer { padding-left:24px; padding-right:24px; }
+  .footer-column { align-items:flex-start; text-align:left; }
+  .footer-nav-column a,.footer-contact-item { justify-content:flex-start; }
+  .footer-divider,.footer-column-divider { margin-left:0; margin-right:0; }
+  .field-grid,.session-options,.guardian-actions { grid-template-columns:minmax(0,1fr); }
+  fieldset,.choice-field,.session-card,.form-section-title,.form-section-title>div,.guardian-panel>div { min-width:0; max-width:100%; }
+  .schedule-dialog,.success-modal .modal-card { max-width:calc(100% - 30px); }
 }
 @media (max-width: 600px) {
-  .site-header { height:72px; padding-inline:12px; }.brand { gap:8px; }.brand-logo { width:44px; height:44px; flex:0 0 44px; }.brand-copy { max-width:130px; }.brand-copy strong { font-size:13px; }.brand-copy small { margin-top:1px; font-size:8px; letter-spacing:0; }.site-header .button-small { flex:0 0 auto; padding:8px 10px; font-size:12px; }.site-footer { padding-inline:22px; }.quick-facts { grid-template-columns:1fr; margin-bottom:65px; }.quick-facts>div { justify-content:flex-start; padding-left:25px; border-right:0; border-bottom:1px solid var(--line); }.quick-facts>div:nth-child(3) { border-bottom:1px solid var(--line); }
+  .site-header { height:72px; padding-inline:12px; }.brand { gap:8px; }.brand-logo { width:44px; height:44px; flex:0 0 44px; }.brand-copy { max-width:130px; }.brand-copy strong { font-size:13px; }.brand-copy small { margin-top:1px; font-size:8px; letter-spacing:0; }.site-header .button-small { flex:0 0 auto; padding:8px 10px; font-size:12px; }.quick-facts { grid-template-columns:1fr; margin-bottom:65px; }.quick-facts>div { justify-content:flex-start; padding-left:25px; border-right:0; border-bottom:1px solid var(--line); }.quick-facts>div:nth-child(3) { border-bottom:1px solid var(--line); }
   .poster-frame { display:none; }
   .section { padding-top:75px; padding-bottom:75px; }.poster-section { padding-top:30px; }.section-heading { margin-bottom:35px; }.feature-grid,.feature-grid.training-grid,.journey-grid { grid-template-columns:1fr; }.journey-grid { max-width:420px; margin-inline:auto; }.feature-card:last-child { grid-column:auto; }.feature-card { min-height:350px; }.steps { grid-template-columns:1fr; }.session-options,.field-grid { grid-template-columns:1fr; }.field.full { grid-column:auto; }.registration-form { margin-inline:0; }.form-top { display:block; }.save-status { display:inline-block; margin-top:10px; }.faq-section { gap:28px; }.site-footer { grid-template-columns:1fr; gap:34px; }.footer-nav-column,.footer-contact-column { padding-top:0; }
   .full-schedule-list,.schedule-camp-grid { grid-template-columns:1fr; }
