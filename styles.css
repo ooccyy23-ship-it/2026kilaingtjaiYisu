@@ -305,7 +305,8 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
   .hero { margin-bottom:0; }
   .poster-section { padding-top:32px; }
   .hero-image-actions { width:42%; height:13.1%; display:grid; grid-template-columns:1fr; grid-template-rows:repeat(2,1fr); gap:9.5%; left:29%; right:auto; top:66.7%; max-width:100%; }
-  .schedule-glow-blue,.schedule-glow-gold,.story-section::before,.story-section::after { max-width:100%; }
+  .schedule-glow,.schedule-glow-blue,.schedule-glow-gold { display:none; }
+  .story-section::before,.story-section::after { max-width:100%; }
   .camp-info-grid,.schedule-camp-grid { grid-template-columns:1fr; gap:24px; }
   .camp-info-card,.journey-card,.schedule-camp-card,.feature-card,.day-card,.contact-card,.registration-form,.modal-card { width:100%; max-width:100%; min-width:0; }
   .button:not(.button-small) { min-height:56px; font-size:18px; }
