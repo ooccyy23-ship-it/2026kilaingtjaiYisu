@@ -307,6 +307,18 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
   .section-heading,.register-section,.faq-section { grid-template-columns:1fr; gap:45px; }.feature-grid,.feature-grid.training-grid,.journey-grid { grid-template-columns:1fr 1fr; }.camp-info-grid { grid-template-columns:1fr; max-width:680px; margin-inline:auto; }.schedule-grid { grid-template-columns:1fr; max-width:620px; margin-inline:auto; }.day-card { min-height:auto; }.steps { grid-template-columns:1fr 1fr; gap:28px; }.steps li::after { display:none; }.form-intro,.faq-title { position:static; }
 }
 @media (max-width: 768px) {
+  html,
+  body {
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+    position:relative;
+  }
+  main {
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
   .site-header,main,section,footer,.hero,.poster-details,.camp-info-grid,.camp-info-card,.journey-grid,.schedule-camp-grid,.schedule-camp-card,.register-section,.registration-form { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
   .section { padding-left:20px; padding-right:20px; }
   img,.hero-main-image,.hero-picture img { width:100%; max-width:100%; height:auto; display:block; }
@@ -317,8 +329,15 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
   .hero { margin-bottom:0; }
   .poster-section { padding-top:32px; }
   .hero-image-actions { width:42%; height:13.1%; display:grid; grid-template-columns:1fr; grid-template-rows:repeat(2,1fr); gap:9.5%; left:29%; right:auto; top:66.7%; max-width:100%; }
-  .schedule-glow,.schedule-glow-blue,.schedule-glow-gold { display:none; }
-  .story-section::before,.story-section::after { max-width:100%; }
+  .story-section::before,
+  .story-section::after {
+    display:none !important;
+  }
+  .schedule-glow,
+  .schedule-glow-blue,
+  .schedule-glow-gold {
+    display:none !important;
+  }
   .camp-info-grid,.schedule-camp-grid { grid-template-columns:1fr; gap:24px; }
   .camp-info-card,.journey-card,.schedule-camp-card,.feature-card,.day-card,.contact-card,.registration-form,.modal-card { width:100%; max-width:100%; min-width:0; }
   .button:not(.button-small) { min-height:56px; font-size:18px; }
