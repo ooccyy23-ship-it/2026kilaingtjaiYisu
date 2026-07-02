@@ -275,8 +275,20 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .field-hint.valid { color: #16845e; font-weight: 700; }.field-hint.error { color: #b54d37; font-weight: 700; }
 .choice-field { margin: 0; }.choice-field.compact-choice { min-width: 0; }.choice-field legend { margin-bottom: 9px; }
 .option-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.option-chips label { flex: 1; cursor: pointer; min-width: 90px; }
-.option-chips input { position: absolute; opacity: 0; pointer-events: none; }
+.option-chips label { position:relative; flex:1; min-width:0; cursor:pointer; }
+.option-chips input {
+  position:absolute;
+  inline-size:1px;
+  block-size:1px;
+  margin:0;
+  padding:0;
+  opacity:0;
+  pointer-events:none;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
 .option-chips label>span { min-height: 45px; display: grid; place-items: center; padding: 8px 13px; border: 1px solid #d3d8e2; border-radius: 8px; background: white; font-size: 12px; font-weight: 700; transition: .2s; }
 .option-chips input:checked+span { color: var(--green); border-color: var(--green); background: #eef3e5; box-shadow: inset 0 0 0 1px var(--green); }
 .option-chips input:focus-visible+span { outline: 3px solid rgba(37,99,235,.18); outline-offset: 2px; }
