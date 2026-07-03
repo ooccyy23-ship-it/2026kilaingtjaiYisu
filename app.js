@@ -146,14 +146,23 @@ function saveDraft() {
   const data = Object.fromEntries(new FormData(form).entries());
   delete data.consent;
   delete data.consentFile;
-  localStorage.setItem(storageKey, JSON.stringify(data));
-  saveStatus.textContent = "已自動暫存";
-  clearTimeout(saveDraft.timer);
-  saveDraft.timer = setTimeout(() => saveStatus.textContent = "尚未送出", 1600);
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    saveStatus.textContent = "已自動暫存";
+    clearTimeout(saveDraft.timer);
+    saveDraft.timer = setTimeout(() => saveStatus.textContent = "尚未送出", 1600);
+  } catch (e) {
+    // Safari 無痕模式封鎖 localStorage，靜默忽略
+  }
 }
 
 function restoreDraft() {
-  const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  } catch (e) {
+    // Safari 無痕模式封鎖 localStorage，靜默忽略
+  }
   Object.entries(saved).forEach(([name, value]) => {
     const control = form.elements[name];
     if (!control) return;
@@ -361,7 +370,7 @@ form.addEventListener("submit", async event => {
     }
 
     await setDoc(registrationRef, registrationData);
-    localStorage.removeItem(storageKey);
+    try { localStorage.removeItem(storageKey); } catch (e) {}
     form.reset();
     toggleOtherField(transport, transportOtherField, transportOther);
     toggleOtherField(diet, dietOtherField, dietOther);
