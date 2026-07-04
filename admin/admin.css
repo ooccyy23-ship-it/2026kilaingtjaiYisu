@@ -152,7 +152,7 @@ a {
 
 .main-content {
   min-width: 0;
-  padding: 35px clamp(24px, 4vw, 58px) 60px;
+  padding: 26px clamp(24px, 4vw, 58px) 60px;
 }
 
 .topbar {
@@ -160,7 +160,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 18px;
 }
 
 .eyebrow,
@@ -174,7 +174,7 @@ a {
 
 .topbar h1 {
   margin: 0;
-  font-size: clamp(28px, 3vw, 38px);
+  font-size: clamp(24px, 2.4vw, 30px);
   letter-spacing: -.04em;
 }
 
@@ -287,7 +287,7 @@ a {
 }
 
 .statistics-dashboard {
-  margin-top: 32px;
+  margin-top: 18px;
 }
 
 .statistics-heading {
