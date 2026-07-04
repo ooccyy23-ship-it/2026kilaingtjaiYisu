@@ -19,11 +19,11 @@
       </a>
 
       <nav class="sidebar-nav" aria-label="後台選單">
-        <a class="nav-item active" href="./index.html" aria-current="page">
+        <a class="nav-item active" id="dashboardNav" href="./index.html" aria-current="page">
           <span class="nav-icon" aria-hidden="true">◫</span>
           <span>Dashboard</span>
         </a>
-        <button class="nav-item" type="button">
+        <button class="nav-item" id="registrationNav" type="button">
           <span class="nav-icon" aria-hidden="true">≡</span>
           <span>報名資料</span>
         </button>
@@ -83,46 +83,30 @@
             <p class="eyebrow">REGISTRATION INSIGHTS</p>
             <h2 id="statisticsTitle">報名狀況總覽</h2>
           </div>
-          <p>點選卡片即可快速篩選下方名單</p>
+          <p>點選卡片查看分析或快速篩選名單</p>
         </div>
-
-        <section class="statistics-group" aria-labelledby="overallStatisticsTitle">
-          <h3 id="overallStatisticsTitle">整體統計</h3>
-          <div class="statistics-grid">
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="all" aria-pressed="false">
-              <span class="stat-icon stat-icon--blue"><svg><use href="#icon-users"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">總報名人數</span><strong class="stat-value" data-stat="totalCount">0</strong><small>全部報名資料</small></span>
-              <span class="stat-arrow" aria-hidden="true">→</span>
-            </button>
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="youth" aria-pressed="false">
-              <span class="stat-icon stat-icon--teal"><svg><use href="#icon-cap"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">青年領袖營</span><strong class="stat-value" data-stat="youthCount">0</strong><small>青年營報名人數</small></span>
-              <span class="stat-arrow" aria-hidden="true">→</span>
-            </button>
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="child" aria-pressed="false">
-              <span class="stat-icon stat-icon--coral"><svg><use href="#icon-heart"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">暑期兒童營</span><strong class="stat-value" data-stat="childCount">0</strong><small>兒童營報名人數</small></span>
-              <span class="stat-arrow" aria-hidden="true">→</span>
-            </button>
-          </div>
-        </section>
 
         <section class="statistics-group" aria-labelledby="youthManagementTitle">
           <h3 id="youthManagementTitle">青年營管理</h3>
           <div class="statistics-grid">
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="youthTransport" aria-pressed="false">
-              <span class="stat-icon stat-icon--teal"><svg><use href="#icon-bus"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">需接送</span><strong class="stat-value" data-stat="youthTransport">0</strong><small>青年營接送名單</small></span>
+            <button class="stat-card is-loading" type="button" data-action="analysis" data-analysis="population" data-camp="青年領袖營" aria-pressed="false">
+              <span class="stat-icon stat-icon--teal"><svg><use href="#icon-cap"></use></svg></span>
+              <span class="stat-copy"><span class="stat-label">青年營人數</span><strong class="stat-value" data-stat="youthCount">0</strong><small>點擊查看性別與年齡統計</small></span>
+              <span class="stat-arrow" aria-hidden="true">⌄</span>
+            </button>
+            <button class="stat-card is-loading" type="button" data-action="transport" data-dashboard-filter="youthTransport" aria-pressed="false">
+              <span class="stat-icon stat-icon--blue"><svg><use href="#icon-bus"></use></svg></span>
+              <span class="stat-copy"><span class="stat-label">接送需求</span><strong class="stat-value" data-stat="youthTransport">0</strong><small>點擊查看需接送名單</small></span>
               <span class="stat-arrow" aria-hidden="true">→</span>
             </button>
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="youthDiet" aria-pressed="false">
+            <button class="stat-card is-loading" type="button" data-action="analysis" data-analysis="diet" data-camp="青年領袖營" aria-pressed="false">
               <span class="stat-icon stat-icon--amber"><svg><use href="#icon-utensils"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">特殊飲食</span><strong class="stat-value" data-stat="youthDiet">0</strong><small>非葷食需求</small></span>
-              <span class="stat-arrow" aria-hidden="true">→</span>
+              <span class="stat-copy"><span class="stat-label">飲食需求</span><strong class="stat-value" data-stat="youthDiet">0</strong><small>點擊查看飲食分類統計</small></span>
+              <span class="stat-arrow" aria-hidden="true">⌄</span>
             </button>
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="youthShirt" data-shirt-camp="青年領袖營" aria-pressed="false">
-              <span class="stat-icon stat-icon--blue"><svg><use href="#icon-shirt"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">衣服尺寸</span><strong class="stat-value stat-value--size" data-stat="youthTopShirt">—</strong><small>最常選擇尺寸</small></span>
+            <button class="stat-card is-loading" type="button" data-action="analysis" data-analysis="shirt" data-camp="青年領袖營" aria-pressed="false">
+              <span class="stat-icon stat-icon--purple"><svg><use href="#icon-shirt"></use></svg></span>
+              <span class="stat-copy"><span class="stat-label">衣服尺寸</span><strong class="stat-value stat-value--size" data-stat="youthTopShirt">—</strong><small>點擊查看尺寸統計</small></span>
               <span class="stat-arrow" aria-hidden="true">⌄</span>
             </button>
           </div>
@@ -131,34 +115,42 @@
         <section class="statistics-group" aria-labelledby="childManagementTitle">
           <h3 id="childManagementTitle">兒童營管理</h3>
           <div class="statistics-grid">
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="childTransport" aria-pressed="false">
-              <span class="stat-icon stat-icon--teal"><svg><use href="#icon-bus"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">需接送</span><strong class="stat-value" data-stat="childTransport">0</strong><small>兒童營接送名單</small></span>
+            <button class="stat-card is-loading" type="button" data-action="analysis" data-analysis="population" data-camp="暑期兒童營" aria-pressed="false">
+              <span class="stat-icon stat-icon--coral"><svg><use href="#icon-heart"></use></svg></span>
+              <span class="stat-copy"><span class="stat-label">兒童營人數</span><strong class="stat-value" data-stat="childCount">0</strong><small>點擊查看性別與年齡統計</small></span>
+              <span class="stat-arrow" aria-hidden="true">⌄</span>
+            </button>
+            <button class="stat-card is-loading" type="button" data-action="transport" data-dashboard-filter="childTransport" aria-pressed="false">
+              <span class="stat-icon stat-icon--blue"><svg><use href="#icon-bus"></use></svg></span>
+              <span class="stat-copy"><span class="stat-label">接送需求</span><strong class="stat-value" data-stat="childTransport">0</strong><small>點擊查看需接送名單</small></span>
               <span class="stat-arrow" aria-hidden="true">→</span>
             </button>
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="childDiet" aria-pressed="false">
+            <button class="stat-card is-loading" type="button" data-action="analysis" data-analysis="diet" data-camp="暑期兒童營" aria-pressed="false">
               <span class="stat-icon stat-icon--amber"><svg><use href="#icon-utensils"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">特殊飲食</span><strong class="stat-value" data-stat="childDiet">0</strong><small>非葷食需求</small></span>
-              <span class="stat-arrow" aria-hidden="true">→</span>
+              <span class="stat-copy"><span class="stat-label">飲食需求</span><strong class="stat-value" data-stat="childDiet">0</strong><small>點擊查看飲食分類統計</small></span>
+              <span class="stat-arrow" aria-hidden="true">⌄</span>
             </button>
-            <button class="stat-card is-loading" type="button" data-dashboard-filter="childShirt" data-shirt-camp="暑期兒童營" aria-pressed="false">
-              <span class="stat-icon stat-icon--coral"><svg><use href="#icon-shirt"></use></svg></span>
-              <span class="stat-copy"><span class="stat-label">衣服尺寸</span><strong class="stat-value stat-value--size" data-stat="childTopShirt">—</strong><small>最常選擇尺寸</small></span>
+            <button class="stat-card is-loading" type="button" data-action="analysis" data-analysis="shirt" data-camp="暑期兒童營" aria-pressed="false">
+              <span class="stat-icon stat-icon--purple"><svg><use href="#icon-shirt"></use></svg></span>
+              <span class="stat-copy"><span class="stat-label">衣服尺寸</span><strong class="stat-value stat-value--size" data-stat="childTopShirt">—</strong><small>點擊查看尺寸統計</small></span>
               <span class="stat-arrow" aria-hidden="true">⌄</span>
             </button>
           </div>
         </section>
 
-        <div class="shirt-chart" id="shirtChart" hidden>
-          <div class="shirt-chart-heading">
-            <div><p class="eyebrow">SIZE DISTRIBUTION</p><h3 id="shirtChartTitle"></h3></div>
-            <button type="button" id="closeShirtChart" aria-label="收起衣服尺寸統計">收起</button>
+        <div class="analysis-panel" id="analysisPanel" hidden>
+          <div class="analysis-panel-heading">
+            <div class="analysis-title-wrap">
+              <span class="analysis-icon" aria-hidden="true"><svg><use id="analysisIconUse" href="#icon-users"></use></svg></span>
+              <div><p class="eyebrow">CAMP ANALYSIS</p><h3 id="analysisPanelTitle"></h3></div>
+            </div>
+            <button type="button" id="closeAnalysisPanel" aria-label="收合分析面板">×</button>
           </div>
-          <div class="shirt-bars" id="shirtBars"></div>
+          <div class="analysis-content" id="analysisContent"></div>
         </div>
       </section>
 
-      <section class="workspace" aria-labelledby="workspaceTitle">
+      <section class="workspace" id="registrationWorkspace" aria-labelledby="workspaceTitle">
         <div class="section-heading">
           <div>
             <p class="eyebrow">OVERVIEW</p>

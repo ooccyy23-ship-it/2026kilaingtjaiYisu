@@ -25,13 +25,17 @@ const editForm = document.querySelector("#editForm");
 const editMessage = document.querySelector("#editMessage");
 const saveEditButton = document.querySelector("#saveEdit");
 const logoutButton = document.querySelector("#logoutButton");
+const dashboardNav = document.querySelector("#dashboardNav");
+const registrationNav = document.querySelector("#registrationNav");
+const registrationWorkspace = document.querySelector("#registrationWorkspace");
 const statisticsDashboard = document.querySelector(".statistics-dashboard");
 const statCards = [...document.querySelectorAll(".stat-card")];
 const statValues = [...document.querySelectorAll("[data-stat]")];
-const shirtChart = document.querySelector("#shirtChart");
-const shirtChartTitle = document.querySelector("#shirtChartTitle");
-const shirtBars = document.querySelector("#shirtBars");
-const closeShirtChartButton = document.querySelector("#closeShirtChart");
+const analysisPanel = document.querySelector("#analysisPanel");
+const analysisPanelTitle = document.querySelector("#analysisPanelTitle");
+const analysisContent = document.querySelector("#analysisContent");
+const analysisIconUse = document.querySelector("#analysisIconUse");
+const closeAnalysisPanelButton = document.querySelector("#closeAnalysisPanel");
 const editFields = {
   documentId: document.querySelector("#editDocumentId"),
   camp: document.querySelector("#editCamp"),
@@ -165,12 +169,45 @@ function getRecordCamp(data) {
   return data.camp ?? "";
 }
 
-function isSpecialDiet(data) {
-  const diet = String(data.diet ?? "").trim();
-  return Boolean(diet) && diet !== "葷食";
+function getCampRecords(campName) {
+  return registrationRecords.filter(({ data }) => getRecordCamp(data) === campName);
 }
 
-function createShirtDistribution(records) {
+function countByField(records, field) {
+  return records.reduce((counts, { data }) => {
+    const value = String(data[field] ?? "").trim() || "未填寫";
+    counts[value] = (counts[value] ?? 0) + 1;
+    return counts;
+  }, {});
+}
+
+function getGenderDistribution(records) {
+  const distribution = { 男: 0, 女: 0, "其他 / 保留": 0 };
+  records.forEach(({ data }) => {
+    if (data.gender === "男") distribution.男 += 1;
+    else if (data.gender === "女") distribution.女 += 1;
+    else distribution["其他 / 保留"] += 1;
+  });
+  return distribution;
+}
+
+function getDietDistribution(records) {
+  const distribution = { 葷食: 0, 素食: 0, 其他: 0 };
+  const otherDetails = {};
+  records.forEach(({ data }) => {
+    const diet = String(data.diet ?? "").trim();
+    if (diet === "葷食") distribution.葷食 += 1;
+    else if (diet === "素食") distribution.素食 += 1;
+    else {
+      distribution.其他 += 1;
+      const detail = String(data.dietOther || diet || "未填寫").trim();
+      otherDetails[detail] = (otherDetails[detail] ?? 0) + 1;
+    }
+  });
+  return { distribution, otherDetails };
+}
+
+function getShirtSizeDistribution(records) {
   const distribution = Object.fromEntries(SHIRT_SIZES.map(size => [size, 0]));
   records.forEach(({ data }) => {
     const size = String(data.shirtSize ?? "").toUpperCase().trim();
@@ -179,30 +216,54 @@ function createShirtDistribution(records) {
   return distribution;
 }
 
-function getTopShirt(distribution) {
+function getAgeDistribution(records, campType) {
+  const labels = campType === "youth"
+    ? ["15–17 歲", "18–20 歲", "21–23 歲", "24 歲以上"]
+    : ["8 歲以下", "9–10 歲", "11–12 歲", "13 歲以上"];
+  const distribution = Object.fromEntries(labels.map(label => [label, 0]));
+
+  records.forEach(({ data }) => {
+    const calculatedAge = data.age ?? calculateAge(data.birthDate);
+    if (calculatedAge === "" || calculatedAge === "—") return;
+    const age = Number(calculatedAge);
+    if (!Number.isFinite(age)) return;
+    if (campType === "youth") {
+      if (age >= 15 && age <= 17) distribution["15–17 歲"] += 1;
+      else if (age >= 18 && age <= 20) distribution["18–20 歲"] += 1;
+      else if (age >= 21 && age <= 23) distribution["21–23 歲"] += 1;
+      else if (age >= 24) distribution["24 歲以上"] += 1;
+    } else {
+      if (age <= 8) distribution["8 歲以下"] += 1;
+      else if (age <= 10) distribution["9–10 歲"] += 1;
+      else if (age <= 12) distribution["11–12 歲"] += 1;
+      else distribution["13 歲以上"] += 1;
+    }
+  });
+  return distribution;
+}
+
+function getMostPopularSize(records) {
+  const distribution = getShirtSizeDistribution(records);
   const [size, count] = Object.entries(distribution)
     .reduce((top, item) => item[1] > top[1] ? item : top, ["—", 0]);
   return count ? `${size}（${count}人）` : "尚無資料";
 }
 
 function calculateDashboardStatistics() {
-  const youthRecords = registrationRecords.filter(({ data }) => getRecordCamp(data) === YOUTH_CAMP);
-  const childRecords = registrationRecords.filter(({ data }) => getRecordCamp(data) === CHILD_CAMP);
-  const youthShirtDistribution = createShirtDistribution(youthRecords);
-  const childShirtDistribution = createShirtDistribution(childRecords);
+  const youthRecords = getCampRecords(YOUTH_CAMP);
+  const childRecords = getCampRecords(CHILD_CAMP);
+  const youthDiet = getDietDistribution(youthRecords).distribution;
+  const childDiet = getDietDistribution(childRecords).distribution;
 
   return {
-    totalCount: registrationRecords.length,
     youthCount: youthRecords.length,
     childCount: childRecords.length,
-    youthTransport: youthRecords.filter(({ data }) => data.transport === "需接送").length,
-    childTransport: childRecords.filter(({ data }) => data.transport === "需接送").length,
-    youthDiet: youthRecords.filter(({ data }) => isSpecialDiet(data)).length,
-    childDiet: childRecords.filter(({ data }) => isSpecialDiet(data)).length,
-    youthShirtDistribution,
-    childShirtDistribution,
-    youthTopShirt: getTopShirt(youthShirtDistribution),
-    childTopShirt: getTopShirt(childShirtDistribution),
+    youthTransport: countByField(youthRecords, "transport").需接送 ?? 0,
+    childTransport: countByField(childRecords, "transport").需接送 ?? 0,
+    youthDiet: youthDiet.素食 + youthDiet.其他,
+    childDiet: childDiet.素食 + childDiet.其他,
+    youthTopShirt: getMostPopularSize(youthRecords),
+    childTopShirt: getMostPopularSize(childRecords),
   };
 }
 
@@ -230,76 +291,126 @@ function renderDashboardStatistics() {
     else element.textContent = value;
   });
   statCards.forEach(card => card.classList.remove("is-loading"));
-  if (!shirtChart.hidden) renderShirtChart(shirtChart.dataset.camp);
-}
-
-function renderShirtChart(camp) {
-  const isYouth = camp === YOUTH_CAMP;
-  const distribution = isYouth
-    ? dashboardStatistics.youthShirtDistribution
-    : dashboardStatistics.childShirtDistribution;
-  const maximum = Math.max(...Object.values(distribution), 1);
-  shirtChart.dataset.camp = camp;
-  shirtChartTitle.textContent = `${isYouth ? "青年營" : "兒童營"}衣服尺寸`;
-  shirtBars.replaceChildren();
-
-  SHIRT_SIZES.forEach(size => {
-    const count = distribution[size];
-    const row = document.createElement("div");
-    row.className = "shirt-bar-row";
-    row.innerHTML = `
-      <span class="shirt-size">${size}</span>
-      <span class="shirt-bar-track"><span class="shirt-bar-fill" style="--bar-width: ${(count / maximum) * 100}%"></span></span>
-      <strong>${count} 人</strong>
-    `;
-    shirtBars.append(row);
-  });
-  shirtChart.hidden = false;
-  requestAnimationFrame(() => shirtChart.classList.add("is-open"));
-}
-
-function closeShirtChart() {
-  shirtChart.classList.remove("is-open");
-  shirtChart.hidden = true;
-}
-
-function matchesDashboardFilter(data) {
-  const camp = getRecordCamp(data);
-  switch (dashboardFilter) {
-    case "youth":
-    case "youthShirt":
-      return camp === YOUTH_CAMP;
-    case "child":
-    case "childShirt":
-      return camp === CHILD_CAMP;
-    case "youthTransport":
-      return camp === YOUTH_CAMP && data.transport === "需接送";
-    case "childTransport":
-      return camp === CHILD_CAMP && data.transport === "需接送";
-    case "youthDiet":
-      return camp === YOUTH_CAMP && isSpecialDiet(data);
-    case "childDiet":
-      return camp === CHILD_CAMP && isSpecialDiet(data);
-    default:
-      return true;
+  if (!analysisPanel.hidden && analysisPanel.dataset.analysis && analysisPanel.dataset.camp) {
+    renderAnalysisPanel(analysisPanel.dataset.analysis, analysisPanel.dataset.camp);
   }
 }
 
-function applyDashboardFilter(card) {
-  dashboardFilter = card.dataset.dashboardFilter;
+function createDistributionChart(title, distribution, total, colorClass = "") {
+  const section = document.createElement("section");
+  section.className = "analysis-chart";
+  const heading = document.createElement("h4");
+  heading.textContent = title;
+  const bars = document.createElement("div");
+  bars.className = "analysis-bars";
+
+  Object.entries(distribution).forEach(([label, count]) => {
+    const percentage = total ? Math.round((count / total) * 100) : 0;
+    const row = document.createElement("div");
+    row.className = "analysis-bar-row";
+    row.innerHTML = `
+      <span class="analysis-bar-label"></span>
+      <span class="analysis-bar-track"><span class="analysis-bar-fill ${colorClass}" style="--bar-width: ${percentage}%"></span></span>
+      <strong>${count} 人 <small>${percentage}%</small></strong>
+    `;
+    row.querySelector(".analysis-bar-label").textContent = label;
+    bars.append(row);
+  });
+  section.append(heading, bars);
+  return section;
+}
+
+function renderAnalysisPanel(type, camp) {
+  const records = getCampRecords(camp);
+  const isYouth = camp === YOUTH_CAMP;
+  const campLabel = isYouth ? "青年營" : "兒童營";
+  analysisPanel.dataset.analysis = type;
+  analysisPanel.dataset.camp = camp;
+  analysisContent.replaceChildren();
+
+  if (type === "population") {
+    analysisPanelTitle.textContent = `${campLabel}人數統計`;
+    analysisIconUse.setAttribute("href", isYouth ? "#icon-cap" : "#icon-heart");
+    analysisContent.append(
+      createDistributionChart("性別統計", getGenderDistribution(records), records.length, "bar-fill--teal"),
+      createDistributionChart("年齡區間統計", getAgeDistribution(records, isYouth ? "youth" : "child"), records.length, "bar-fill--purple")
+    );
+  } else if (type === "diet") {
+    const { distribution, otherDetails } = getDietDistribution(records);
+    analysisPanelTitle.textContent = `${campLabel}飲食需求統計`;
+    analysisIconUse.setAttribute("href", "#icon-utensils");
+    analysisContent.append(
+      createDistributionChart("飲食分類", distribution, records.length, "bar-fill--amber")
+    );
+    const details = Object.entries(otherDetails);
+    if (details.length) {
+      const detailBox = document.createElement("div");
+      detailBox.className = "analysis-details";
+      const detailTitle = document.createElement("h4");
+      detailTitle.textContent = "其他飲食明細";
+      const detailText = document.createElement("p");
+      detailText.textContent = details.map(([label, count]) => `${label}（${count}人）`).join("、");
+      detailBox.append(detailTitle, detailText);
+      analysisContent.append(detailBox);
+    }
+  } else {
+    analysisPanelTitle.textContent = `${campLabel}衣服尺寸統計`;
+    analysisIconUse.setAttribute("href", "#icon-shirt");
+    analysisContent.append(
+      createDistributionChart("尺寸分布", getShirtSizeDistribution(records), records.length, "bar-fill--blue")
+    );
+  }
+
+  analysisPanel.hidden = false;
+  requestAnimationFrame(() => analysisPanel.classList.add("is-open"));
+}
+
+function closeAnalysisPanel() {
+  analysisPanel.classList.remove("is-open");
+  analysisPanel.hidden = true;
+}
+
+function setActiveStatCard(activeCard) {
   statCards.forEach(item => {
-    const active = item === card;
+    const active = item === activeCard;
     item.classList.toggle("is-active", active);
     item.setAttribute("aria-pressed", String(active));
   });
+}
 
-  const showsShirtChart = Boolean(card.dataset.shirtCamp);
-  if (showsShirtChart) renderShirtChart(card.dataset.shirtCamp);
-  else closeShirtChart();
+function matchesDashboardFilter(data) {
+  if (dashboardFilter === "youthTransport") {
+    return getRecordCamp(data) === YOUTH_CAMP && data.transport === "需接送";
+  }
+  if (dashboardFilter === "childTransport") {
+    return getRecordCamp(data) === CHILD_CAMP && data.transport === "需接送";
+  }
+  return true;
+}
 
+function handleStatCardClick(card) {
+  const isAlreadyActive = card.classList.contains("is-active");
+
+  if (card.dataset.action === "transport") {
+    closeAnalysisPanel();
+    dashboardFilter = isAlreadyActive ? "all" : card.dataset.dashboardFilter;
+    setActiveStatCard(isAlreadyActive ? null : card);
+    filterRegistrations();
+    registrationWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  dashboardFilter = "all";
   filterRegistrations();
-  (showsShirtChart ? shirtChart : document.querySelector(".workspace"))
-    .scrollIntoView({ behavior: "smooth", block: "start" });
+  if (isAlreadyActive && !analysisPanel.hidden) {
+    closeAnalysisPanel();
+    setActiveStatCard(null);
+    return;
+  }
+
+  setActiveStatCard(card);
+  renderAnalysisPanel(card.dataset.analysis, card.dataset.camp);
+  analysisPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function renderRegistration(record) {
@@ -593,9 +704,19 @@ ageFilter.addEventListener("change", filterRegistrations);
 consentFilter.addEventListener("change", filterRegistrations);
 statisticsDashboard.addEventListener("click", event => {
   const card = event.target.closest(".stat-card");
-  if (card && !card.classList.contains("is-loading")) applyDashboardFilter(card);
+  if (card && !card.classList.contains("is-loading")) handleStatCardClick(card);
 });
-closeShirtChartButton.addEventListener("click", closeShirtChart);
+closeAnalysisPanelButton.addEventListener("click", () => {
+  closeAnalysisPanel();
+  setActiveStatCard(null);
+});
+registrationNav.addEventListener("click", () => {
+  dashboardNav.classList.remove("active");
+  dashboardNav.removeAttribute("aria-current");
+  registrationNav.classList.add("active");
+  registrationNav.setAttribute("aria-current", "page");
+  registrationWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 exportExcelButton.addEventListener("click", exportCompleteRegistrations);
 registrationRows.addEventListener("click", event => {
   const downloadButton = event.target.closest(".download-button");
