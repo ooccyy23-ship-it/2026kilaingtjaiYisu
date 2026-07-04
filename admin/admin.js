@@ -42,19 +42,33 @@ const editFields = {
 let totalRegistrations = 0;
 let registrationRecords = [];
 
-function calculateAge(birthDate) {
+const campDates = Object.freeze({
+  青年領袖營: "2026-07-12",
+  暑期兒童營: "2026-07-27",
+});
+
+function calculateAge(birthDate, targetDate = new Date()) {
   if (!birthDate) return "—";
 
   const birth = new Date(`${birthDate}T00:00:00`);
-  if (Number.isNaN(birth.getTime())) return "—";
+  const target = typeof targetDate === "string"
+    ? new Date(`${targetDate}T00:00:00`)
+    : targetDate;
+  if (Number.isNaN(birth.getTime()) || Number.isNaN(target.getTime())) return "—";
 
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const beforeBirthday = today.getMonth() < birth.getMonth() ||
-    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate());
+  let age = target.getFullYear() - birth.getFullYear();
+  const beforeBirthday = target.getMonth() < birth.getMonth() ||
+    (target.getMonth() === birth.getMonth() && target.getDate() < birth.getDate());
 
   if (beforeBirthday) age -= 1;
   return age >= 0 ? age : "—";
+}
+
+function normalizeOtherValue(value, standardValues) {
+  const normalizedValue = value.trim();
+  return standardValues.includes(normalizedValue)
+    ? { value: normalizedValue, other: "" }
+    : { value: "其他", other: normalizedValue };
 }
 
 function formatRegistrationDate(value) {
@@ -73,9 +87,10 @@ function formatRegistrationDate(value) {
   }).format(date);
 }
 
-function addCell(row, value) {
+function addCell(row, value, className = "") {
   const cell = document.createElement("td");
   cell.textContent = value || "—";
+  if (className) cell.className = className;
   row.append(cell);
 }
 
@@ -150,12 +165,13 @@ function renderRegistration(record) {
   const hasConsent = Boolean(data.hasGuardianConsent ?? consentFileReference);
 
   row.dataset.search = normalizeSearchValue(
-    `${data.name ?? ""} ${data.phone ?? ""} ${data.church ?? ""}`
+    `${data.name ?? ""} ${data.phone ?? ""} ${data.church ?? ""} ${data.camp ?? ""}`
   );
   row.dataset.documentId = id;
   row.dataset.ageGroup = ageGroup;
   row.dataset.consentStatus = hasConsent ? "uploaded" : "missing";
   addCell(row, data.name);
+  addCell(row, data.camp || "未指定營隊", "camp-cell");
   addCell(row, data.gender);
   addCell(row, data.church);
   addCell(row, String(age));
@@ -315,17 +331,32 @@ async function saveRegistration(event) {
   if (!editForm.reportValidity()) return;
 
   const documentId = editFields.documentId.value;
+  const camp = editFields.camp.value;
+  const birthDate = editFields.birthDate.value;
+  const age = calculateAge(birthDate, campDates[camp]);
+  const transport = normalizeOtherValue(
+    editFields.transport.value,
+    ["需接送", "自行前往"]
+  );
+  const diet = normalizeOtherValue(
+    editFields.diet.value,
+    ["葷食", "素食"]
+  );
   const updates = {
-    camp: editFields.camp.value,
+    camp,
     name: editFields.name.value.trim(),
     gender: editFields.gender.value,
-    birthDate: editFields.birthDate.value,
+    birthDate,
+    age,
+    isMinor: age !== "—" && age < 18,
     address: editFields.address.value.trim(),
     phone: editFields.phone.value.trim(),
     email: editFields.email.value.trim(),
     church: editFields.church.value.trim(),
-    transport: editFields.transport.value.trim(),
-    diet: editFields.diet.value.trim(),
+    transport: transport.value,
+    transportOther: transport.other,
+    diet: diet.value,
+    dietOther: diet.other,
     shirtSize: editFields.shirtSize.value,
   };
 

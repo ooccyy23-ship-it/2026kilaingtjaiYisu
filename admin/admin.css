@@ -414,7 +414,7 @@ a {
 
 table {
   width: 100%;
-  min-width: 650px;
+  min-width: 760px;
   border-collapse: collapse;
 }
 
@@ -437,6 +437,12 @@ th {
 
 td {
   color: var(--ink);
+}
+
+.camp-cell {
+  color: var(--blue);
+  font-weight: 800;
+  white-space: nowrap;
 }
 
 tbody tr:last-child td {
