@@ -54,6 +54,7 @@ let totalRegistrations = 0;
 let registrationRecords = [];
 let dashboardFilter = "all";
 let dashboardStatistics = null;
+let hasAnimatedDashboardCounts = false;
 
 const YOUTH_CAMP = "青年領袖營";
 const CHILD_CAMP = "暑期兒童營";
@@ -280,15 +281,14 @@ function calculateDashboardStatistics() {
   };
 }
 
-function animateCount(element, target) {
-  const duration = 800;
+function animateNumber(element, end, duration = 800) {
+  const start = 0;
   const startTime = performance.now();
-  const startValue = Number(element.textContent) || 0;
 
   function update(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     const easedProgress = 1 - Math.pow(1 - progress, 3);
-    element.textContent = Math.round(startValue + (target - startValue) * easedProgress);
+    element.textContent = Math.round(start + (end - start) * easedProgress);
     if (progress < 1) requestAnimationFrame(update);
   }
 
@@ -300,9 +300,15 @@ function renderDashboardStatistics() {
   statValues.forEach(element => {
     const key = element.dataset.stat;
     const value = dashboardStatistics[key];
-    if (typeof value === "number") animateCount(element, value);
-    else element.textContent = value;
+    if (typeof value === "number") {
+      element.dataset.count = value;
+      if (hasAnimatedDashboardCounts) element.textContent = value;
+      else animateNumber(element, value);
+    } else {
+      element.textContent = value;
+    }
   });
+  hasAnimatedDashboardCounts = true;
   renderMiniAnalytics();
   statCards.forEach(card => card.classList.remove("is-loading"));
   if (!analysisPanel.hidden && analysisPanel.dataset.analysis && analysisPanel.dataset.camp) {
@@ -330,6 +336,7 @@ function renderMiniAnalytics() {
 
   document.querySelectorAll("[data-mini-shirt]").forEach(container => {
     const isYouth = container.dataset.miniShirt === "youth";
+    const campKey = isYouth ? "youth" : "child";
     const distribution = isYouth
       ? dashboardStatistics.youthShirtDistribution
       : dashboardStatistics.childShirtDistribution;
@@ -355,12 +362,8 @@ function renderMiniAnalytics() {
       container.append(row);
     });
 
-    if (allItems.length > topItems.length) {
-      const more = document.createElement("span");
-      more.className = "mini-more";
-      more.textContent = "查看全部 →";
-      container.append(more);
-    }
+    const viewAllLink = document.querySelector(`[data-view-all="${campKey}"]`);
+    viewAllLink.hidden = allItems.length <= topItems.length;
   });
 
   requestAnimationFrame(() => {

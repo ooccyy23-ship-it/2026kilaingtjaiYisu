@@ -350,7 +350,11 @@ a {
   overflow: hidden;
   text-align: left;
   cursor: pointer;
-  transition: transform .22s, border-color .22s, box-shadow .22s;
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease,
+    background-color .25s ease;
 }
 
 .stat-card--mini {
@@ -360,9 +364,17 @@ a {
 }
 
 .stat-card:hover {
-  border-color: #b8cdf5;
-  box-shadow: 0 14px 30px rgba(25, 58, 105, .1);
-  transform: translateY(-3px);
+  border-color: rgba(37, 99, 235, .28);
+  box-shadow: 0 16px 30px rgba(37, 99, 235, .12);
+  transform: translateY(-4px);
+}
+
+.stat-icon {
+  transition: filter .25s ease;
+}
+
+.stat-card:hover .stat-icon {
+  filter: brightness(1.08);
 }
 
 .stat-card:focus-visible {
@@ -497,16 +509,32 @@ a {
   background: #865fd3;
 }
 
-.mini-more,
 .mini-empty {
   color: var(--muted);
   font-size: 9px;
   font-weight: 700;
 }
 
-.mini-more {
-  color: #7656c8;
-  text-align: right;
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.view-all-link {
+  color: var(--blue);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color .2s ease;
+}
+
+.view-all-link:hover {
+  text-decoration: underline;
 }
 
 .stat-copy small {
