@@ -418,9 +418,7 @@ function handleStatCardClick(card) {
     return;
   }
 
-  dashboardFilter = card.dataset.analysis === "population"
-    ? (card.dataset.camp === YOUTH_CAMP ? "youth" : "child")
-    : "all";
+  dashboardFilter = card.dataset.camp === YOUTH_CAMP ? "youth" : "child";
   filterRegistrations();
   setActiveStatCard(card);
   renderAnalysisPanel(card.dataset.analysis, card.dataset.camp);
