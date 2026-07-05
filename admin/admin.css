@@ -333,7 +333,7 @@ a {
 
 .stat-card {
   min-width: 0;
-  min-height: 104px;
+  min-height: 108px;
   position: relative;
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr) 12px;
@@ -348,6 +348,10 @@ a {
   text-align: left;
   cursor: pointer;
   transition: transform .22s, border-color .22s, box-shadow .22s;
+}
+
+.stat-card--mini {
+  min-height: 120px;
 }
 
 .stat-card:hover {
@@ -432,6 +436,84 @@ a {
   font-size: clamp(17px, 1.4vw, 21px);
   letter-spacing: -.025em;
   white-space: nowrap;
+}
+
+.stat-value--mini {
+  display: inline;
+  font-size: 25px;
+}
+
+.mini-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.mini-summary small {
+  margin: 0;
+  font-size: 9px;
+}
+
+.mini-analytics {
+  min-width: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin-top: 7px;
+}
+
+.mini-diet-item {
+  padding: 3px 5px;
+  border-radius: 5px;
+  font-size: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.mini-diet-item--meat {
+  color: #9b6410;
+  background: #fff1cf;
+}
+
+.mini-diet-item--veg {
+  color: #16765f;
+  background: #dcf4eb;
+}
+
+.mini-diet-item--other {
+  color: #7255b3;
+  background: #eee8ff;
+}
+
+[data-mini-shirt] {
+  height: 28px;
+  align-items: stretch;
+  gap: 3px;
+}
+
+.mini-size-item {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 17px 9px;
+  flex: 1;
+  align-items: end;
+  text-align: center;
+}
+
+.mini-size-item i {
+  width: 70%;
+  height: var(--mini-height);
+  max-height: 17px;
+  justify-self: center;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(180deg, #8a6bd8, #b3a0e8);
+}
+
+.mini-size-item small {
+  margin: 1px 0 0;
+  font-size: 6px;
+  line-height: 1;
 }
 
 .stat-copy small {

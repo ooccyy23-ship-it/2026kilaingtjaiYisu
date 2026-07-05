@@ -262,6 +262,10 @@ function calculateDashboardStatistics() {
     childTransport: countByField(childRecords, "transport").需接送 ?? 0,
     youthDiet: youthDiet.素食,
     childDiet: childDiet.素食,
+    youthDietDistribution: youthDiet,
+    childDietDistribution: childDiet,
+    youthShirtDistribution: getShirtSizeDistribution(youthRecords),
+    childShirtDistribution: getShirtSizeDistribution(childRecords),
     youthTopShirt: getMostPopularSize(youthRecords),
     childTopShirt: getMostPopularSize(childRecords),
   };
@@ -290,10 +294,43 @@ function renderDashboardStatistics() {
     if (typeof value === "number") animateCount(element, value);
     else element.textContent = value;
   });
+  renderMiniAnalytics();
   statCards.forEach(card => card.classList.remove("is-loading"));
   if (!analysisPanel.hidden && analysisPanel.dataset.analysis && analysisPanel.dataset.camp) {
     renderAnalysisPanel(analysisPanel.dataset.analysis, analysisPanel.dataset.camp);
   }
+}
+
+function renderMiniAnalytics() {
+  document.querySelectorAll("[data-mini-diet]").forEach(container => {
+    const isYouth = container.dataset.miniDiet === "youth";
+    const distribution = isYouth
+      ? dashboardStatistics.youthDietDistribution
+      : dashboardStatistics.childDietDistribution;
+    container.replaceChildren();
+    Object.entries(distribution).forEach(([label, count]) => {
+      const item = document.createElement("span");
+      item.className = `mini-diet-item mini-diet-item--${label === "葷食" ? "meat" : label === "素食" ? "veg" : "other"}`;
+      item.textContent = `${label} ${count}`;
+      container.append(item);
+    });
+  });
+
+  document.querySelectorAll("[data-mini-shirt]").forEach(container => {
+    const isYouth = container.dataset.miniShirt === "youth";
+    const distribution = isYouth
+      ? dashboardStatistics.youthShirtDistribution
+      : dashboardStatistics.childShirtDistribution;
+    const maximum = Math.max(...Object.values(distribution), 1);
+    container.replaceChildren();
+    SHIRT_SIZES.forEach(size => {
+      const item = document.createElement("span");
+      item.className = "mini-size-item";
+      item.innerHTML = `<i style="--mini-height:${Math.max((distribution[size] / maximum) * 100, 8)}%"></i><small>${size}</small>`;
+      item.title = `${size}：${distribution[size]} 人`;
+      container.append(item);
+    });
+  });
 }
 
 function createDistributionChart(title, distribution, total, colorClass = "") {
@@ -404,6 +441,17 @@ function handleStatCardClick(card) {
   if (card.dataset.action === "transport") {
     closeAnalysisPanel();
     dashboardFilter = isAlreadyActive ? "all" : card.dataset.dashboardFilter;
+    setActiveStatCard(isAlreadyActive ? null : card);
+    filterRegistrations();
+    registrationWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  if (card.dataset.action === "campFilter") {
+    closeAnalysisPanel();
+    dashboardFilter = isAlreadyActive
+      ? "all"
+      : (card.dataset.camp === YOUTH_CAMP ? "youth" : "child");
     setActiveStatCard(isAlreadyActive ? null : card);
     filterRegistrations();
     registrationWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
