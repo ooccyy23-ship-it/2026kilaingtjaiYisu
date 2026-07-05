@@ -363,6 +363,16 @@ a {
   align-items: start;
 }
 
+.stat-card--shirt {
+  padding: 20px 18px;
+  border: 1.5px solid rgba(167, 139, 250, .18);
+}
+
+.stat-card--shirt:hover,
+.stat-card--shirt.is-active {
+  border-color: #a78bfa;
+}
+
 .stat-card:hover {
   border-color: rgba(37, 99, 235, .28);
   box-shadow: 0 16px 30px rgba(37, 99, 235, .12);
@@ -507,6 +517,55 @@ a {
 
 .mini-bar-row--shirt i em {
   background: #865fd3;
+}
+
+.stat-card--shirt [data-mini-shirt] {
+  display: flex;
+  align-items: stretch;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.mini-size-card {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  flex: 0 1 52px;
+  gap: 3px;
+  padding: 9px 6px;
+  border-radius: 14px;
+  background: #f3edff;
+  text-align: center;
+}
+
+.mini-size-card b {
+  color: #7656c8;
+  font-size: 9px;
+  line-height: 1;
+}
+
+.mini-size-card strong {
+  color: var(--navy);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.size-dots {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.size-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #dce2eb;
+}
+
+.size-dots i:first-child {
+  background: #8b5cf6;
 }
 
 .mini-empty {

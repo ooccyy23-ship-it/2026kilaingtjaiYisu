@@ -336,12 +336,10 @@ function renderMiniAnalytics() {
 
   document.querySelectorAll("[data-mini-shirt]").forEach(container => {
     const isYouth = container.dataset.miniShirt === "youth";
-    const campKey = isYouth ? "youth" : "child";
     const distribution = isYouth
       ? dashboardStatistics.youthShirtDistribution
       : dashboardStatistics.childShirtDistribution;
-    const allItems = Object.entries(distribution).filter(([, count]) => count > 0);
-    const topItems = getTopDistributionItems(distribution);
+    const topItems = getTopDistributionItems(distribution, 3);
     container.replaceChildren();
 
     if (topItems.length === 0) {
@@ -352,18 +350,13 @@ function renderMiniAnalytics() {
       return;
     }
 
-    const maximum = Math.max(...topItems.map(([, count]) => count), 1);
     topItems.forEach(([size, count]) => {
-      const row = document.createElement("span");
-      row.className = "mini-bar-row mini-bar-row--shirt";
-      row.innerHTML = `<b>${size}</b><i><em style="--mini-width:0%"></em></i><small>${count}</small>`;
-      row.querySelector("em").dataset.targetWidth = `${(count / maximum) * 100}%`;
-      row.title = `${size}：${count} 人`;
-      container.append(row);
+      const sizeCard = document.createElement("span");
+      sizeCard.className = "mini-size-card";
+      sizeCard.innerHTML = `<b>${size}</b><strong>${count}</strong>`;
+      sizeCard.title = `${size}：${count} 人`;
+      container.append(sizeCard);
     });
-
-    const viewAllLink = document.querySelector(`[data-view-all="${campKey}"]`);
-    viewAllLink.hidden = allItems.length <= topItems.length;
   });
 
   requestAnimationFrame(() => {
