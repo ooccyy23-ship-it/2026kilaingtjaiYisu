@@ -7,6 +7,38 @@ service cloud.firestore {
         && request.auth.token.admin == true;
     }
 
+    function registrationSettingsPath() {
+      return /databases/$(database)/documents/siteSettings/registrationOpen;
+    }
+
+    function isCampOpen(camp) {
+      return !exists(registrationSettingsPath())
+        || (
+          camp == '青年領袖營'
+          && get(registrationSettingsPath()).data.youthCamp == true
+        )
+        || (
+          camp == '暑期兒童營'
+          && get(registrationSettingsPath()).data.kidsCamp == true
+        );
+    }
+
+    function hasValidRegistrationSettings() {
+      return request.resource.data.keys().hasAll([
+          'youthCamp',
+          'kidsCamp',
+          'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'youthCamp',
+          'kidsCamp',
+          'updatedAt'
+        ])
+        && request.resource.data.youthCamp is bool
+        && request.resource.data.kidsCamp is bool
+        && request.resource.data.updatedAt == request.time;
+    }
+
     function hasValidRegistrationFields() {
       let required = [
         'camp',
@@ -75,8 +107,15 @@ service cloud.firestore {
     }
 
     match /registrations/{registrationId} {
-      allow create: if hasValidRegistrationFields();
+      allow create: if hasValidRegistrationFields()
+        && isCampOpen(request.resource.data.camp);
       allow read, update, delete: if isAdmin();
+    }
+
+    match /siteSettings/registrationOpen {
+      allow read: if true;
+      allow create, update: if isAdmin() && hasValidRegistrationSettings();
+      allow delete: if isAdmin();
     }
 
     match /{document=**} {

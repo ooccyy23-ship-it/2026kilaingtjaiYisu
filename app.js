@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  onSnapshot,
   serverTimestamp,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
@@ -31,30 +32,13 @@ const diet = document.querySelector("#diet");
 const dietOther = document.querySelector("#dietOther");
 const dietOtherField = document.querySelector("#dietOtherField");
 const storageKey = "youth-leadership-camp-draft";
-const registrationSettingsKey = "registrationOpenSettings";
 const defaultRegistrationOpenSettings = Object.freeze({
   youthCamp: true,
   kidsCamp: true,
 });
+const registrationSettingsRef = doc(db, "siteSettings", "registrationOpen");
 
-function readRegistrationOpenSettings() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(registrationSettingsKey) || "null");
-    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
-      return { ...defaultRegistrationOpenSettings };
-    }
-    return {
-      youthCamp: saved.youthCamp !== false,
-      kidsCamp: saved.kidsCamp !== false,
-    };
-  } catch (error) {
-    console.warn("報名開放設定格式異常，已使用預設值。", error);
-    return { ...defaultRegistrationOpenSettings };
-  }
-}
-
-function applyRegistrationOpenSettings() {
-  const settings = readRegistrationOpenSettings();
+function applyRegistrationOpenSettings(settings) {
   const campSettings = {
     青年領袖營: settings.youthCamp,
     暑期兒童營: settings.kidsCamp,
@@ -69,6 +53,20 @@ function applyRegistrationOpenSettings() {
     label.setAttribute("aria-disabled", String(!isOpen));
   });
   updateGuardianRequirement();
+}
+
+function listenForRegistrationOpenSettings() {
+  applyRegistrationOpenSettings(defaultRegistrationOpenSettings);
+  onSnapshot(registrationSettingsRef, snapshot => {
+    const data = snapshot.exists() ? snapshot.data() : {};
+    applyRegistrationOpenSettings({
+      youthCamp: data.youthCamp !== false,
+      kidsCamp: data.kidsCamp !== false,
+    });
+  }, error => {
+    console.error("報名開放設定讀取失敗：", error);
+    applyRegistrationOpenSettings(defaultRegistrationOpenSettings);
+  });
 }
 
 document.addEventListener("scroll", () => {
@@ -454,7 +452,4 @@ document.querySelectorAll(".faq-list details").forEach(item => {
 });
 
 restoreDraft();
-applyRegistrationOpenSettings();
-window.addEventListener("storage", event => {
-  if (event.key === registrationSettingsKey) applyRegistrationOpenSettings();
-});
+listenForRegistrationOpenSettings();

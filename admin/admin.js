@@ -7,6 +7,9 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  onSnapshot,
+  serverTimestamp,
+  setDoc,
   updateDoc,
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 import { getDownloadURL, ref } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-storage.js";
@@ -23,6 +26,7 @@ const pageIndicator = document.querySelector("#pageIndicator");
 const registrationSearch = document.querySelector("#registrationSearch");
 const ageFilter = document.querySelector("#ageFilter");
 const consentFilter = document.querySelector("#consentFilter");
+const exportScope = document.querySelector("#exportScope");
 const exportExcelButton = document.querySelector("#exportExcel");
 const editDialog = document.querySelector("#editDialog");
 const editForm = document.querySelector("#editForm");
@@ -67,36 +71,31 @@ let dashboardFilter = "all";
 let dashboardStatistics = null;
 let hasAnimatedDashboardCounts = false;
 let currentPage = 1;
+let lastRegistrationOpenSettings = {
+  youthCamp: true,
+  kidsCamp: true,
+};
 
 const YOUTH_CAMP = "青年領袖營";
 const CHILD_CAMP = "暑期兒童營";
 const SHIRT_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 const REGISTRATIONS_PER_PAGE = 10;
-const REGISTRATION_SETTINGS_KEY = "registrationOpenSettings";
 const DEFAULT_REGISTRATION_SETTINGS = Object.freeze({
   youthCamp: true,
   kidsCamp: true,
 });
+const registrationSettingsRef = doc(db, "siteSettings", "registrationOpen");
 
 const campDates = Object.freeze({
   青年領袖營: "2026-07-12",
   暑期兒童營: "2026-07-27",
 });
 
-function readRegistrationOpenSettings() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(REGISTRATION_SETTINGS_KEY) || "null");
-    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
-      return { ...DEFAULT_REGISTRATION_SETTINGS };
-    }
-    return {
-      youthCamp: saved.youthCamp !== false,
-      kidsCamp: saved.kidsCamp !== false,
-    };
-  } catch (error) {
-    console.warn("報名開放設定格式異常，已使用預設值。", error);
-    return { ...DEFAULT_REGISTRATION_SETTINGS };
-  }
+function normalizeRegistrationOpenSettings(data = {}) {
+  return {
+    youthCamp: data.youthCamp !== false,
+    kidsCamp: data.kidsCamp !== false,
+  };
 }
 
 function updateRegistrationSettingStatus(statusElement, isOpen) {
@@ -106,19 +105,34 @@ function updateRegistrationSettingStatus(statusElement, isOpen) {
 }
 
 function renderRegistrationOpenSettings(settings) {
+  lastRegistrationOpenSettings = { ...settings };
   youthCampToggle.checked = settings.youthCamp;
   kidsCampToggle.checked = settings.kidsCamp;
   updateRegistrationSettingStatus(youthCampStatus, settings.youthCamp);
   updateRegistrationSettingStatus(kidsCampStatus, settings.kidsCamp);
 }
 
-function saveRegistrationOpenSettings() {
+async function saveRegistrationOpenSettings() {
   const settings = {
     youthCamp: youthCampToggle.checked,
     kidsCamp: kidsCampToggle.checked,
   };
-  localStorage.setItem(REGISTRATION_SETTINGS_KEY, JSON.stringify(settings));
-  renderRegistrationOpenSettings(settings);
+  youthCampToggle.disabled = true;
+  kidsCampToggle.disabled = true;
+
+  try {
+    await setDoc(registrationSettingsRef, {
+      ...settings,
+      updatedAt: serverTimestamp(),
+    }, { merge: true });
+  } catch (error) {
+    console.error("報名開放設定儲存失敗：", error);
+    renderRegistrationOpenSettings(lastRegistrationOpenSettings);
+    window.alert("設定儲存失敗，請稍後再試。");
+  } finally {
+    youthCampToggle.disabled = false;
+    kidsCampToggle.disabled = false;
+  }
 }
 
 function setAdminView(view) {
@@ -738,7 +752,17 @@ function serializeExcelValue(value) {
 function exportCompleteRegistrations() {
   if (registrationRecords.length === 0) return;
 
-  const exportData = registrationRecords.map(({ data }) => ({
+  const selectedScope = exportScope.value;
+  const recordsToExport = selectedScope === "all"
+    ? registrationRecords
+    : registrationRecords.filter(({ data }) => getRecordCamp(data) === selectedScope);
+
+  if (recordsToExport.length === 0) {
+    window.alert(`目前沒有「${selectedScope}」的報名資料。`);
+    return;
+  }
+
+  const exportData = recordsToExport.map(({ data }) => ({
     建立時間: serializeExcelValue(
       data.createdAt ?? data.registrationDate ?? data.submittedAt
     ),
@@ -765,10 +789,14 @@ function exportCompleteRegistrations() {
 
   const worksheet = utils.json_to_sheet(exportData);
   const workbook = utils.book_new();
-  utils.book_append_sheet(workbook, worksheet, "報名資料");
+  const scopeLabel = selectedScope === "all" ? "全部資料" : selectedScope;
+  utils.book_append_sheet(workbook, worksheet, scopeLabel);
 
   const date = new Intl.DateTimeFormat("sv-SE").format(new Date());
-  writeFileXLSX(workbook, `Kilaing_tjai_Yisu_系列活動報名資料_${date}.xlsx`);
+  writeFileXLSX(
+    workbook,
+    `Kilaing_tjai_Yisu_${scopeLabel}_報名資料_${date}.xlsx`
+  );
 }
 
 function openEditDialog(documentId) {
@@ -963,7 +991,15 @@ document.querySelector("#cancelEdit").addEventListener("click", closeEditDialog)
 editDialog.addEventListener("click", event => {
   if (event.target === editDialog) closeEditDialog();
 });
-renderRegistrationOpenSettings(readRegistrationOpenSettings());
+onSnapshot(registrationSettingsRef, snapshot => {
+  const settings = snapshot.exists()
+    ? normalizeRegistrationOpenSettings(snapshot.data())
+    : { ...DEFAULT_REGISTRATION_SETTINGS };
+  renderRegistrationOpenSettings(settings);
+}, error => {
+  console.error("報名開放設定讀取失敗：", error);
+  renderRegistrationOpenSettings(DEFAULT_REGISTRATION_SETTINGS);
+});
 logoutButton.addEventListener("click", async () => {
   logoutButton.disabled = true;
   try {

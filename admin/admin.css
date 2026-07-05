@@ -1086,6 +1086,10 @@ a {
   width: 145px;
 }
 
+.export-scope-field {
+  width: 132px;
+}
+
 .filter-field select {
   padding: 8px 30px 8px 10px;
   cursor: pointer;

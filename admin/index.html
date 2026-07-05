@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>管理後台｜Kilaing tjai Yisu</title>
-  <link rel="stylesheet" href="./admin.css?v=20260706-14">
+  <link rel="stylesheet" href="./admin.css?v=20260706-16">
 </head>
 <body hidden>
   <div class="admin-layout">
@@ -176,6 +176,14 @@
                 <option value="missing">未上傳同意書</option>
               </select>
             </label>
+            <label class="filter-field export-scope-field">
+              <span class="sr-only">選擇 Excel 匯出範圍</span>
+              <select id="exportScope">
+                <option value="all">全部資料</option>
+                <option value="青年領袖營">青年領袖營</option>
+                <option value="暑期兒童營">暑期兒童營</option>
+              </select>
+            </label>
             <button class="export-button" id="exportExcel" type="button" disabled>
               匯出 Excel
             </button>
@@ -219,7 +227,7 @@
         <article class="settings-card">
           <div class="settings-card-heading">
             <h3>營隊開放狀態</h3>
-            <small>切換後將自動儲存於此瀏覽器</small>
+            <small>切換後將儲存至 Firestore 並同步前台</small>
           </div>
 
           <div class="camp-setting-list">
@@ -255,7 +263,7 @@
 
         <aside class="settings-note">
           <strong>使用說明</strong>
-          <p>關閉後，前台對應營隊將無法選取；重新開放後即可恢復報名。</p>
+          <p>關閉後，所有使用者的前台對應營隊將無法選取；重新開放後即可恢復報名。</p>
         </aside>
       </section>
     </main>
@@ -292,6 +300,6 @@
       </div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=20260706-14"></script>
+  <script type="module" src="./admin.js?v=20260706-16"></script>
 </body>
 </html>
