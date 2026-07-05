@@ -260,8 +260,8 @@ function calculateDashboardStatistics() {
     childCount: childRecords.length,
     youthTransport: countByField(youthRecords, "transport").需接送 ?? 0,
     childTransport: countByField(childRecords, "transport").需接送 ?? 0,
-    youthDiet: youthDiet.素食 + youthDiet.其他,
-    childDiet: childDiet.素食 + childDiet.其他,
+    youthDiet: youthDiet.素食,
+    childDiet: childDiet.素食,
     youthTopShirt: getMostPopularSize(youthRecords),
     childTopShirt: getMostPopularSize(childRecords),
   };
@@ -324,6 +324,10 @@ function renderAnalysisPanel(type, camp) {
   const records = getCampRecords(camp);
   const isYouth = camp === YOUTH_CAMP;
   const campLabel = isYouth ? "青年營" : "兒童營";
+  const targetGroup = document.querySelector(
+    isYouth ? "#youthManagementTitle" : "#childManagementTitle"
+  ).closest(".statistics-group");
+  targetGroup.append(analysisPanel);
   analysisPanel.dataset.analysis = type;
   analysisPanel.dataset.camp = camp;
   analysisContent.replaceChildren();
@@ -379,6 +383,12 @@ function setActiveStatCard(activeCard) {
 }
 
 function matchesDashboardFilter(data) {
+  if (dashboardFilter === "youth") {
+    return getRecordCamp(data) === YOUTH_CAMP;
+  }
+  if (dashboardFilter === "child") {
+    return getRecordCamp(data) === CHILD_CAMP;
+  }
   if (dashboardFilter === "youthTransport") {
     return getRecordCamp(data) === YOUTH_CAMP && data.transport === "需接送";
   }
@@ -400,14 +410,18 @@ function handleStatCardClick(card) {
     return;
   }
 
-  dashboardFilter = "all";
-  filterRegistrations();
   if (isAlreadyActive && !analysisPanel.hidden) {
+    dashboardFilter = "all";
+    filterRegistrations();
     closeAnalysisPanel();
     setActiveStatCard(null);
     return;
   }
 
+  dashboardFilter = card.dataset.analysis === "population"
+    ? (card.dataset.camp === YOUTH_CAMP ? "youth" : "child")
+    : "all";
+  filterRegistrations();
   setActiveStatCard(card);
   renderAnalysisPanel(card.dataset.analysis, card.dataset.camp);
   analysisPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -709,6 +723,8 @@ statisticsDashboard.addEventListener("click", event => {
 closeAnalysisPanelButton.addEventListener("click", () => {
   closeAnalysisPanel();
   setActiveStatCard(null);
+  dashboardFilter = "all";
+  filterRegistrations();
 });
 registrationNav.addEventListener("click", () => {
   dashboardNav.classList.remove("active");

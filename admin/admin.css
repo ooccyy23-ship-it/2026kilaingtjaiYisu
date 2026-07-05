@@ -333,13 +333,13 @@ a {
 
 .stat-card {
   min-width: 0;
-  min-height: 128px;
+  min-height: 104px;
   position: relative;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 14px;
+  grid-template-columns: 40px minmax(0, 1fr) 12px;
   align-items: center;
-  gap: 13px;
-  padding: 20px 22px;
+  gap: 11px;
+  padding: 14px 16px;
   border: 1px solid rgba(20, 50, 90, .08);
   border-radius: 18px;
   color: var(--ink);
@@ -367,16 +367,16 @@ a {
 }
 
 .stat-icon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   border-radius: 15px;
 }
 
 .stat-icon svg {
-  width: 21px;
-  height: 21px;
+  width: 19px;
+  height: 19px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -417,27 +417,27 @@ a {
 
 .stat-label {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .stat-value {
-  margin-top: 5px;
-  font-size: 34px;
+  margin-top: 3px;
+  font-size: 30px;
   line-height: 1;
   letter-spacing: -.04em;
 }
 
 .stat-value--size {
-  font-size: clamp(18px, 1.5vw, 23px);
+  font-size: clamp(17px, 1.4vw, 21px);
   letter-spacing: -.025em;
   white-space: nowrap;
 }
 
 .stat-copy small {
-  margin-top: 7px;
+  margin-top: 5px;
   color: #8996a9;
-  font-size: 10px;
+  font-size: 9px;
   line-height: 1.35;
 }
 
@@ -1120,8 +1120,8 @@ tbody tr:hover {
   }
 
   .stat-card {
-    min-height: 120px;
-    padding: 20px;
+    min-height: 104px;
+    padding: 15px 17px;
   }
 
   .analysis-panel {
