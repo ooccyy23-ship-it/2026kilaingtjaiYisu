@@ -31,7 +31,14 @@ const saveEditButton = document.querySelector("#saveEdit");
 const logoutButton = document.querySelector("#logoutButton");
 const dashboardNav = document.querySelector("#dashboardNav");
 const registrationNav = document.querySelector("#registrationNav");
+const settingsNav = document.querySelector("#settingsNav");
 const registrationWorkspace = document.querySelector("#registrationWorkspace");
+const adminPageTitle = document.querySelector("#adminPageTitle");
+const settingsPage = document.querySelector("#settingsPage");
+const youthCampToggle = document.querySelector("#youthCampToggle");
+const kidsCampToggle = document.querySelector("#kidsCampToggle");
+const youthCampStatus = document.querySelector("#youthCampStatus");
+const kidsCampStatus = document.querySelector("#kidsCampStatus");
 const statisticsDashboard = document.querySelector(".statistics-dashboard");
 const statCards = [...document.querySelectorAll(".stat-card")];
 const statValues = [...document.querySelectorAll("[data-stat]")];
@@ -65,11 +72,72 @@ const YOUTH_CAMP = "青年領袖營";
 const CHILD_CAMP = "暑期兒童營";
 const SHIRT_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 const REGISTRATIONS_PER_PAGE = 10;
+const REGISTRATION_SETTINGS_KEY = "registrationOpenSettings";
+const DEFAULT_REGISTRATION_SETTINGS = Object.freeze({
+  youthCamp: true,
+  kidsCamp: true,
+});
 
 const campDates = Object.freeze({
   青年領袖營: "2026-07-12",
   暑期兒童營: "2026-07-27",
 });
+
+function readRegistrationOpenSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(REGISTRATION_SETTINGS_KEY) || "null");
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+      return { ...DEFAULT_REGISTRATION_SETTINGS };
+    }
+    return {
+      youthCamp: saved.youthCamp !== false,
+      kidsCamp: saved.kidsCamp !== false,
+    };
+  } catch (error) {
+    console.warn("報名開放設定格式異常，已使用預設值。", error);
+    return { ...DEFAULT_REGISTRATION_SETTINGS };
+  }
+}
+
+function updateRegistrationSettingStatus(statusElement, isOpen) {
+  statusElement.textContent = isOpen ? "🟢 開放報名" : "🔴 暫停報名";
+  statusElement.classList.toggle("is-open", isOpen);
+  statusElement.classList.toggle("is-closed", !isOpen);
+}
+
+function renderRegistrationOpenSettings(settings) {
+  youthCampToggle.checked = settings.youthCamp;
+  kidsCampToggle.checked = settings.kidsCamp;
+  updateRegistrationSettingStatus(youthCampStatus, settings.youthCamp);
+  updateRegistrationSettingStatus(kidsCampStatus, settings.kidsCamp);
+}
+
+function saveRegistrationOpenSettings() {
+  const settings = {
+    youthCamp: youthCampToggle.checked,
+    kidsCamp: kidsCampToggle.checked,
+  };
+  localStorage.setItem(REGISTRATION_SETTINGS_KEY, JSON.stringify(settings));
+  renderRegistrationOpenSettings(settings);
+}
+
+function setAdminView(view) {
+  const showSettings = view === "settings";
+  settingsPage.hidden = !showSettings;
+  statisticsDashboard.hidden = showSettings;
+  registrationWorkspace.hidden = showSettings;
+  adminPageTitle.textContent = showSettings ? "設定" : "分析圖表";
+
+  [dashboardNav, registrationNav, settingsNav].forEach(item => {
+    item.classList.remove("active");
+    item.removeAttribute("aria-current");
+  });
+  const activeNav = showSettings
+    ? settingsNav
+    : view === "registrations" ? registrationNav : dashboardNav;
+  activeNav.classList.add("active");
+  activeNav.setAttribute("aria-current", "page");
+}
 
 function calculateAge(birthDate, targetDate = new Date()) {
   if (!birthDate) return "—";
@@ -857,13 +925,21 @@ closeAnalysisPanelButton.addEventListener("click", () => {
   dashboardFilter = "all";
   filterRegistrations();
 });
+dashboardNav.addEventListener("click", event => {
+  event.preventDefault();
+  setAdminView("dashboard");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
 registrationNav.addEventListener("click", () => {
-  dashboardNav.classList.remove("active");
-  dashboardNav.removeAttribute("aria-current");
-  registrationNav.classList.add("active");
-  registrationNav.setAttribute("aria-current", "page");
+  setAdminView("registrations");
   registrationWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
 });
+settingsNav.addEventListener("click", () => {
+  setAdminView("settings");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+youthCampToggle.addEventListener("change", saveRegistrationOpenSettings);
+kidsCampToggle.addEventListener("change", saveRegistrationOpenSettings);
 exportExcelButton.addEventListener("click", exportCompleteRegistrations);
 registrationRows.addEventListener("click", event => {
   const downloadButton = event.target.closest(".download-button");
@@ -887,6 +963,7 @@ document.querySelector("#cancelEdit").addEventListener("click", closeEditDialog)
 editDialog.addEventListener("click", event => {
   if (event.target === editDialog) closeEditDialog();
 });
+renderRegistrationOpenSettings(readRegistrationOpenSettings());
 logoutButton.addEventListener("click", async () => {
   logoutButton.disabled = true;
   try {

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>管理後台｜Kilaing tjai Yisu</title>
-  <link rel="stylesheet" href="./admin.css?v=20260705-13">
+  <link rel="stylesheet" href="./admin.css?v=20260706-14">
 </head>
 <body hidden>
   <div class="admin-layout">
@@ -27,7 +27,7 @@
           <span class="nav-icon" aria-hidden="true">≡</span>
           <span>報名資料</span>
         </button>
-        <button class="nav-item" type="button">
+        <button class="nav-item" id="settingsNav" type="button">
           <span class="nav-icon" aria-hidden="true">⚙</span>
           <span>設定</span>
         </button>
@@ -45,7 +45,7 @@
     <main class="main-content">
       <header class="topbar">
         <div>
-          <h1>分析圖表</h1>
+          <h1 id="adminPageTitle">分析圖表</h1>
         </div>
         <div class="admin-profile" aria-label="目前登入身分">
           <span class="avatar" aria-hidden="true">A</span>
@@ -208,6 +208,56 @@
         </nav>
         <p class="table-message" id="tableMessage" aria-live="polite">正在讀取報名資料…</p>
       </section>
+
+      <section class="settings-page" id="settingsPage" aria-labelledby="settingsTitle" hidden>
+        <div class="settings-heading">
+          <p class="eyebrow">REGISTRATION SETTINGS</p>
+          <h2 id="settingsTitle">報名開放設定</h2>
+          <p>可控制前台各營隊是否開放報名。</p>
+        </div>
+
+        <article class="settings-card">
+          <div class="settings-card-heading">
+            <h3>營隊開放狀態</h3>
+            <small>切換後將自動儲存於此瀏覽器</small>
+          </div>
+
+          <div class="camp-setting-list">
+            <div class="camp-setting-row">
+              <span class="setting-camp-icon setting-camp-icon--youth" aria-hidden="true"><svg><use href="#icon-cap"></use></svg></span>
+              <div class="setting-camp-copy">
+                <strong>青年領袖培訓營</strong>
+                <small>前台報名表單中的青年營選項</small>
+              </div>
+              <span class="registration-status" id="youthCampStatus" aria-live="polite"></span>
+              <label class="toggle-switch">
+                <input id="youthCampToggle" type="checkbox">
+                <span aria-hidden="true"></span>
+                <em>青年領袖培訓營報名開關</em>
+              </label>
+            </div>
+
+            <div class="camp-setting-row">
+              <span class="setting-camp-icon setting-camp-icon--kids" aria-hidden="true"><svg><use href="#icon-heart"></use></svg></span>
+              <div class="setting-camp-copy">
+                <strong>兒童夏令營</strong>
+                <small>前台報名表單中的兒童營選項</small>
+              </div>
+              <span class="registration-status" id="kidsCampStatus" aria-live="polite"></span>
+              <label class="toggle-switch">
+                <input id="kidsCampToggle" type="checkbox">
+                <span aria-hidden="true"></span>
+                <em>兒童夏令營報名開關</em>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <aside class="settings-note">
+          <strong>使用說明</strong>
+          <p>關閉後，前台對應營隊將無法選取；重新開放後即可恢復報名。</p>
+        </aside>
+      </section>
     </main>
   </div>
 
@@ -242,6 +292,6 @@
       </div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=20260705-13"></script>
+  <script type="module" src="./admin.js?v=20260706-14"></script>
 </body>
 </html>

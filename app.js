@@ -31,6 +31,45 @@ const diet = document.querySelector("#diet");
 const dietOther = document.querySelector("#dietOther");
 const dietOtherField = document.querySelector("#dietOtherField");
 const storageKey = "youth-leadership-camp-draft";
+const registrationSettingsKey = "registrationOpenSettings";
+const defaultRegistrationOpenSettings = Object.freeze({
+  youthCamp: true,
+  kidsCamp: true,
+});
+
+function readRegistrationOpenSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(registrationSettingsKey) || "null");
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+      return { ...defaultRegistrationOpenSettings };
+    }
+    return {
+      youthCamp: saved.youthCamp !== false,
+      kidsCamp: saved.kidsCamp !== false,
+    };
+  } catch (error) {
+    console.warn("報名開放設定格式異常，已使用預設值。", error);
+    return { ...defaultRegistrationOpenSettings };
+  }
+}
+
+function applyRegistrationOpenSettings() {
+  const settings = readRegistrationOpenSettings();
+  const campSettings = {
+    青年領袖營: settings.youthCamp,
+    暑期兒童營: settings.kidsCamp,
+  };
+
+  form.querySelectorAll('input[name="camp"]').forEach(option => {
+    const isOpen = campSettings[option.value] !== false;
+    option.disabled = !isOpen;
+    if (!isOpen && option.checked) option.checked = false;
+    const label = option.closest("label");
+    label.classList.toggle("camp-option-disabled", !isOpen);
+    label.setAttribute("aria-disabled", String(!isOpen));
+  });
+  updateGuardianRequirement();
+}
 
 document.addEventListener("scroll", () => {
   document.querySelector(".site-header").classList.toggle("scrolled", window.scrollY > 10);
@@ -146,22 +185,23 @@ function saveDraft() {
   const data = Object.fromEntries(new FormData(form).entries());
   delete data.consent;
   delete data.consentFile;
-  try {
-    localStorage.setItem(storageKey, JSON.stringify(data));
-    saveStatus.textContent = "已自動暫存";
-    clearTimeout(saveDraft.timer);
-    saveDraft.timer = setTimeout(() => saveStatus.textContent = "尚未送出", 1600);
-  } catch (e) {
-    // Safari 無痕模式封鎖 localStorage，靜默忽略
-  }
+  localStorage.setItem(storageKey, JSON.stringify(data));
+  saveStatus.textContent = "已自動暫存";
+  clearTimeout(saveDraft.timer);
+  saveDraft.timer = setTimeout(() => saveStatus.textContent = "尚未送出", 1600);
 }
 
 function restoreDraft() {
   let saved = {};
   try {
     saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
-  } catch (e) {
-    // Safari 無痕模式封鎖 localStorage，靜默忽略
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+      saved = {};
+      localStorage.removeItem(storageKey);
+    }
+  } catch (error) {
+    console.warn("暫存報名資料格式異常，已清除舊草稿。", error);
+    localStorage.removeItem(storageKey);
   }
   Object.entries(saved).forEach(([name, value]) => {
     const control = form.elements[name];
@@ -370,7 +410,7 @@ form.addEventListener("submit", async event => {
     }
 
     await setDoc(registrationRef, registrationData);
-    try { localStorage.removeItem(storageKey); } catch (e) {}
+    localStorage.removeItem(storageKey);
     form.reset();
     toggleOtherField(transport, transportOtherField, transportOther);
     toggleOtherField(diet, dietOtherField, dietOther);
@@ -414,3 +454,7 @@ document.querySelectorAll(".faq-list details").forEach(item => {
 });
 
 restoreDraft();
+applyRegistrationOpenSettings();
+window.addEventListener("storage", event => {
+  if (event.key === registrationSettingsKey) applyRegistrationOpenSettings();
+});

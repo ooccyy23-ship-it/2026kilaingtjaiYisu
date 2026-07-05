@@ -293,6 +293,9 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .option-chips input:checked+span { color: var(--green); border-color: var(--green); background: #eef3e5; box-shadow: inset 0 0 0 1px var(--green); }
 .option-chips input:focus-visible+span { outline: 3px solid rgba(37,99,235,.18); outline-offset: 2px; }
 .option-chips.invalid-group label>span { border-color: #bd5143; background: #fff9f8; }
+.option-chips label.camp-option-disabled { cursor:not-allowed; opacity:.65; }
+.option-chips label.camp-option-disabled>span { color:#4b5563; background:#eef0f2; border-color:#d5d9df; cursor:not-allowed; box-shadow:none; }
+.option-chips label.camp-option-disabled input { cursor:not-allowed; }
 .conditional-field[hidden] { display: none; }
 .guardian-panel { margin-top: 28px; padding: 22px; display: grid; grid-template-columns: auto 1fr; gap: 18px; border: 1px solid #a8c7ff; border-radius: 13px; background: #f1f6ff; }
 .guardian-panel[hidden] { display: none; }.guardian-badge { height: fit-content; padding: 4px 8px; border-radius: 5px; color: white; background: #ec745d; font-size: var(--text-caption); font-weight: 800; white-space: nowrap; }
