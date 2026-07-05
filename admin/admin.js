@@ -260,8 +260,10 @@ function calculateDashboardStatistics() {
     childCount: childRecords.length,
     youthTransport: countByField(youthRecords, "transport").需接送 ?? 0,
     childTransport: countByField(childRecords, "transport").需接送 ?? 0,
-    youthDiet: youthDiet.素食,
-    childDiet: childDiet.素食,
+    youthDietTotal: youthRecords.length,
+    childDietTotal: childRecords.length,
+    youthShirtTotal: youthRecords.length,
+    childShirtTotal: childRecords.length,
     youthDietDistribution: youthDiet,
     childDietDistribution: childDiet,
     youthShirtDistribution: getShirtSizeDistribution(youthRecords),
@@ -307,13 +309,27 @@ function renderMiniAnalytics() {
     const distribution = isYouth
       ? dashboardStatistics.youthDietDistribution
       : dashboardStatistics.childDietDistribution;
-    container.replaceChildren();
+    const total = Object.values(distribution).reduce((sum, count) => sum + count, 0);
+    const track = document.createElement("span");
+    track.className = "mini-diet-track";
+    const legend = document.createElement("span");
+    legend.className = "mini-diet-legend";
+
     Object.entries(distribution).forEach(([label, count]) => {
+      const percentage = total ? Math.round((count / total) * 1000) / 10 : 0;
+      const type = label === "葷食" ? "meat" : label === "素食" ? "veg" : "other";
+      const segment = document.createElement("i");
+      segment.className = `mini-diet-segment mini-diet-segment--${type}`;
+      segment.style.setProperty("--segment-width", `${percentage}%`);
+      track.append(segment);
+
       const item = document.createElement("span");
-      item.className = `mini-diet-item mini-diet-item--${label === "葷食" ? "meat" : label === "素食" ? "veg" : "other"}`;
-      item.textContent = `${label} ${count}`;
-      container.append(item);
+      item.className = "mini-diet-item";
+      item.innerHTML = `<b></b><small>${count} (${percentage}%)</small>`;
+      item.querySelector("b").textContent = label;
+      legend.append(item);
     });
+    container.replaceChildren(track, legend);
   });
 
   document.querySelectorAll("[data-mini-shirt]").forEach(container => {
@@ -326,7 +342,7 @@ function renderMiniAnalytics() {
     SHIRT_SIZES.forEach(size => {
       const item = document.createElement("span");
       item.className = "mini-size-item";
-      item.innerHTML = `<i style="--mini-height:${Math.max((distribution[size] / maximum) * 100, 8)}%"></i><small>${size}</small>`;
+      item.innerHTML = `<i><em style="--mini-width:${(distribution[size] / maximum) * 100}%"></em></i><b>${size}</b><small>${distribution[size]}</small>`;
       item.title = `${size}：${distribution[size]} 人`;
       container.append(item);
     });

@@ -328,18 +328,19 @@ a {
 .statistics-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
   gap: 14px;
 }
 
 .stat-card {
   min-width: 0;
-  min-height: 108px;
+  min-height: 90px;
   position: relative;
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr) 12px;
   align-items: center;
   gap: 11px;
-  padding: 14px 16px;
+  padding: 12px 15px;
   border: 1px solid rgba(20, 50, 90, .08);
   border-radius: 18px;
   color: var(--ink);
@@ -351,7 +352,10 @@ a {
 }
 
 .stat-card--mini {
-  min-height: 120px;
+  min-height: 184px;
+  grid-template-columns: 48px minmax(0, 1fr) 12px;
+  align-items: start;
+  padding: 18px;
 }
 
 .stat-card:hover {
@@ -440,7 +444,7 @@ a {
 
 .stat-value--mini {
   display: inline;
-  font-size: 25px;
+  font-size: 31px;
 }
 
 .mini-summary {
@@ -458,61 +462,108 @@ a {
 .mini-analytics {
   min-width: 0;
   display: flex;
-  align-items: flex-end;
-  gap: 4px;
-  margin-top: 7px;
+  align-items: stretch;
+  gap: 9px;
+  margin-top: 15px;
 }
 
-.mini-diet-item {
-  padding: 3px 5px;
-  border-radius: 5px;
+[data-mini-diet] {
+  display: grid;
+  gap: 10px;
+}
+
+.mini-diet-track {
+  height: 6px;
+  display: flex;
+  border-radius: 20px;
+  background: #e7ebf0;
+  overflow: hidden;
+}
+
+.mini-diet-segment {
+  width: var(--segment-width);
+  height: 100%;
+}
+
+.mini-diet-segment--meat {
+  background: #ef6c00;
+}
+
+.mini-diet-segment--veg {
+  background: #ffb800;
+}
+
+.mini-diet-segment--other {
+  background: #72a579;
+}
+
+.mini-diet-legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.mini-diet-item b,
+.mini-diet-item small {
+  display: block;
+  line-height: 1.3;
+}
+
+.mini-diet-item b {
+  color: var(--muted);
   font-size: 8px;
+}
+
+.mini-diet-item small {
+  margin: 2px 0 0;
+  color: var(--ink);
+  font-size: 7px;
   font-weight: 800;
   white-space: nowrap;
 }
 
-.mini-diet-item--meat {
-  color: #9b6410;
-  background: #fff1cf;
-}
-
-.mini-diet-item--veg {
-  color: #16765f;
-  background: #dcf4eb;
-}
-
-.mini-diet-item--other {
-  color: #7255b3;
-  background: #eee8ff;
-}
-
 [data-mini-shirt] {
-  height: 28px;
-  align-items: stretch;
-  gap: 3px;
+  height: auto;
+  align-items: start;
+  gap: 5px;
 }
 
 .mini-size-item {
   min-width: 0;
   display: grid;
-  grid-template-rows: 17px 9px;
+  grid-template-rows: 6px 12px 11px;
   flex: 1;
-  align-items: end;
+  align-items: center;
   text-align: center;
 }
 
 .mini-size-item i {
-  width: 70%;
-  height: var(--mini-height);
-  max-height: 17px;
-  justify-self: center;
-  border-radius: 3px 3px 1px 1px;
-  background: linear-gradient(180deg, #8a6bd8, #b3a0e8);
+  width: 100%;
+  height: 5px;
+  display: block;
+  border-radius: 20px;
+  background: #edf0f5;
+  overflow: hidden;
+}
+
+.mini-size-item i em {
+  width: var(--mini-width);
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7a4fd1, #a783e8);
+}
+
+.mini-size-item b {
+  color: var(--muted);
+  font-size: 8px;
 }
 
 .mini-size-item small {
-  margin: 1px 0 0;
-  font-size: 6px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 8px;
+  font-weight: 800;
   line-height: 1;
 }
 
