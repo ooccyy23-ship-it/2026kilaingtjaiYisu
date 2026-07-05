@@ -16,6 +16,10 @@ import { auth, db, storage } from "../firebase.js";
 const registrationRows = document.querySelector("#registrationRows");
 const tableMessage = document.querySelector("#tableMessage");
 const dataStatus = document.querySelector("#dataStatus");
+const tablePagination = document.querySelector("#tablePagination");
+const previousPageButton = document.querySelector("#previousPage");
+const nextPageButton = document.querySelector("#nextPage");
+const pageIndicator = document.querySelector("#pageIndicator");
 const registrationSearch = document.querySelector("#registrationSearch");
 const ageFilter = document.querySelector("#ageFilter");
 const consentFilter = document.querySelector("#consentFilter");
@@ -55,10 +59,12 @@ let registrationRecords = [];
 let dashboardFilter = "all";
 let dashboardStatistics = null;
 let hasAnimatedDashboardCounts = false;
+let currentPage = 1;
 
 const YOUTH_CAMP = "青年領袖營";
 const CHILD_CAMP = "暑期兒童營";
 const SHIRT_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+const REGISTRATIONS_PER_PAGE = 10;
 
 const campDates = Object.freeze({
   青年領袖營: "2026-07-12",
@@ -103,6 +109,15 @@ function formatRegistrationDate(value) {
     month: "2-digit",
     day: "2-digit",
   }).format(date);
+}
+
+function getRegistrationTimestamp(data) {
+  const value = data.createdAt ?? data.registrationDate ?? data.submittedAt;
+  if (!value) return 0;
+  if (typeof value.toMillis === "function") return value.toMillis();
+  if (typeof value.toDate === "function") return value.toDate().getTime();
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? 0 : timestamp;
 }
 
 function addCell(row, value, className = "") {
@@ -535,6 +550,7 @@ function renderRegistration(record) {
   row.dataset.diet = data.diet ?? "";
   row.dataset.ageGroup = ageGroup;
   row.dataset.consentStatus = hasConsent ? "uploaded" : "missing";
+  addCell(row, "0", "sequence-cell");
   addCell(row, data.name);
   addCell(row, data.camp || "未指定營隊", "camp-cell");
   addCell(row, data.gender);
@@ -584,16 +600,20 @@ async function downloadConsentFile(button) {
   }
 }
 
-function filterRegistrations() {
+function filterRegistrations(options = {}) {
+  const resetPage = options.resetPage !== false;
   const keyword = normalizeSearchValue(registrationSearch.value);
   const selectedAge = ageFilter.value;
   const selectedConsent = consentFilter.value;
   const rows = registrationRows.querySelectorAll("tr");
-  let visibleCount = 0;
+  const matchedRows = [];
+
+  if (resetPage) currentPage = 1;
 
   if (totalRegistrations === 0) {
     tableMessage.textContent = "目前尚無報名資料。";
     dataStatus.textContent = "0 筆資料";
+    tablePagination.hidden = true;
     exportExcelButton.disabled = true;
     return;
   }
@@ -607,11 +627,26 @@ function filterRegistrations() {
       row.dataset.consentStatus === selectedConsent;
     const matchesDashboard = record ? matchesDashboardFilter(record.data) : false;
     const matches = matchesSearch && matchesAge && matchesConsent && matchesDashboard;
-    row.hidden = !matches;
-    if (matches) visibleCount += 1;
+    row.hidden = true;
+    if (matches) matchedRows.push(row);
   });
 
-  tableMessage.textContent = visibleCount === 0 && totalRegistrations > 0
+  const totalPages = Math.max(1, Math.ceil(matchedRows.length / REGISTRATIONS_PER_PAGE));
+  currentPage = Math.min(currentPage, totalPages);
+  const pageStart = (currentPage - 1) * REGISTRATIONS_PER_PAGE;
+  matchedRows
+    .slice(pageStart, pageStart + REGISTRATIONS_PER_PAGE)
+    .forEach((row, index) => {
+      row.hidden = false;
+      row.querySelector(".sequence-cell").textContent = pageStart + index + 1;
+    });
+
+  tablePagination.hidden = matchedRows.length <= REGISTRATIONS_PER_PAGE;
+  pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+  previousPageButton.disabled = currentPage === 1;
+  nextPageButton.disabled = currentPage === totalPages;
+
+  tableMessage.textContent = matchedRows.length === 0 && totalRegistrations > 0
     ? "找不到符合搜尋條件的報名資料。"
     : "";
   const hasActiveFilter = keyword ||
@@ -619,7 +654,7 @@ function filterRegistrations() {
     selectedConsent !== "all" ||
     dashboardFilter !== "all";
   dataStatus.textContent = hasActiveFilter
-    ? `${visibleCount} / ${totalRegistrations} 筆`
+    ? `${matchedRows.length} / ${totalRegistrations} 筆`
     : `${totalRegistrations} 筆資料`;
   exportExcelButton.disabled = totalRegistrations === 0;
 }
@@ -782,7 +817,9 @@ async function loadRegistrations() {
     registrationRecords = snapshot.docs.map(documentSnapshot => ({
       id: documentSnapshot.id,
       data: documentSnapshot.data(),
-    }));
+    })).sort((recordA, recordB) =>
+      getRegistrationTimestamp(recordB.data) - getRegistrationTimestamp(recordA.data)
+    );
     renderAllRegistrations();
   } catch (error) {
     console.error("讀取報名資料失敗：", error);
@@ -799,6 +836,17 @@ async function loadRegistrations() {
 registrationSearch.addEventListener("input", filterRegistrations);
 ageFilter.addEventListener("change", filterRegistrations);
 consentFilter.addEventListener("change", filterRegistrations);
+previousPageButton.addEventListener("click", () => {
+  if (currentPage <= 1) return;
+  currentPage -= 1;
+  filterRegistrations({ resetPage: false });
+  document.querySelector(".table-wrap").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+nextPageButton.addEventListener("click", () => {
+  currentPage += 1;
+  filterRegistrations({ resetPage: false });
+  document.querySelector(".table-wrap").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 statisticsDashboard.addEventListener("click", event => {
   const card = event.target.closest(".stat-card");
   if (card && !card.classList.contains("is-loading")) handleStatCardClick(card);

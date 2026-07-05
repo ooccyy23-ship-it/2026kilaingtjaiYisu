@@ -976,6 +976,18 @@ td {
   color: var(--ink);
 }
 
+.sequence-column,
+.sequence-cell {
+  width: 58px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sequence-cell {
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .camp-cell {
   color: var(--blue);
   font-weight: 800;
@@ -988,6 +1000,49 @@ tbody tr:last-child td {
 
 tbody tr:hover {
   background: #fafcff;
+}
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.table-pagination[hidden] {
+  display: none;
+}
+
+.table-pagination button {
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--blue);
+  background: white;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, opacity .2s;
+}
+
+.table-pagination button:hover:not(:disabled) {
+  border-color: #b8cdf5;
+  background: var(--blue-soft);
+}
+
+.table-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: .4;
+}
+
+.table-pagination span {
+  min-width: 48px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
 }
 
 .download-button {

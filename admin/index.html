@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>管理後台｜Kilaing tjai Yisu</title>
-  <link rel="stylesheet" href="./admin.css?v=20260705-10">
+  <link rel="stylesheet" href="./admin.css?v=20260705-13">
 </head>
 <body hidden>
   <div class="admin-layout">
@@ -187,6 +187,7 @@
           <table>
             <thead>
               <tr>
+                <th class="sequence-column" scope="col">序號</th>
                 <th scope="col">姓名</th>
                 <th scope="col">報名營隊</th>
                 <th scope="col">性別</th>
@@ -200,6 +201,11 @@
             <tbody id="registrationRows"></tbody>
           </table>
         </div>
+        <nav class="table-pagination" id="tablePagination" aria-label="報名資料分頁" hidden>
+          <button id="previousPage" type="button">上一頁</button>
+          <span id="pageIndicator" aria-live="polite">1 / 1</span>
+          <button id="nextPage" type="button">下一頁</button>
+        </nav>
         <p class="table-message" id="tableMessage" aria-live="polite">正在讀取報名資料…</p>
       </section>
     </main>
@@ -236,6 +242,6 @@
       </div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=20260705-10"></script>
+  <script type="module" src="./admin.js?v=20260705-13"></script>
 </body>
 </html>
