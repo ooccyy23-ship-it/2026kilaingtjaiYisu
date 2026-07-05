@@ -249,6 +249,13 @@ function getMostPopularSize(records) {
   return count ? `${size}（${count}人）` : "尚無資料";
 }
 
+function getTopDistributionItems(distribution, limit = 4) {
+  return Object.entries(distribution)
+    .filter(([, count]) => count > 0)
+    .sort(([, countA], [, countB]) => countB - countA)
+    .slice(0, limit);
+}
+
 function calculateDashboardStatistics() {
   const youthRecords = getCampRecords(YOUTH_CAMP);
   const childRecords = getCampRecords(CHILD_CAMP);
@@ -326,16 +333,34 @@ function renderMiniAnalytics() {
     const distribution = isYouth
       ? dashboardStatistics.youthShirtDistribution
       : dashboardStatistics.childShirtDistribution;
-    const maximum = Math.max(...Object.values(distribution), 1);
+    const allItems = Object.entries(distribution).filter(([, count]) => count > 0);
+    const topItems = getTopDistributionItems(distribution);
     container.replaceChildren();
-    SHIRT_SIZES.forEach(size => {
+
+    if (topItems.length === 0) {
+      const empty = document.createElement("span");
+      empty.className = "mini-empty";
+      empty.textContent = "尚無尺寸資料";
+      container.append(empty);
+      return;
+    }
+
+    const maximum = Math.max(...topItems.map(([, count]) => count), 1);
+    topItems.forEach(([size, count]) => {
       const row = document.createElement("span");
       row.className = "mini-bar-row mini-bar-row--shirt";
-      row.innerHTML = `<b>${size}</b><i><em style="--mini-width:0%"></em></i><small>${distribution[size]}</small>`;
-      row.querySelector("em").dataset.targetWidth = `${(distribution[size] / maximum) * 100}%`;
-      row.title = `${size}：${distribution[size]} 人`;
+      row.innerHTML = `<b>${size}</b><i><em style="--mini-width:0%"></em></i><small>${count}</small>`;
+      row.querySelector("em").dataset.targetWidth = `${(count / maximum) * 100}%`;
+      row.title = `${size}：${count} 人`;
       container.append(row);
     });
+
+    if (allItems.length > topItems.length) {
+      const more = document.createElement("span");
+      more.className = "mini-more";
+      more.textContent = "查看全部 →";
+      container.append(more);
+    }
   });
 
   requestAnimationFrame(() => {
