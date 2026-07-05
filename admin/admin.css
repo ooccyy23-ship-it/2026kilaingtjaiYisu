@@ -1055,8 +1055,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-wrap: nowrap;
+  gap: 8px;
 }
 
 .search-field {
@@ -1086,7 +1086,7 @@ a {
   width: 145px;
 }
 
-.export-scope-field {
+.camp-filter-field {
   width: 132px;
 }
 
@@ -1096,18 +1096,81 @@ a {
 }
 
 .export-button {
-  min-height: 38px;
-  padding: 8px 13px;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 6px 14px;
   border: 0;
   border-radius: 9px;
   color: white;
   background: var(--blue);
   font: inherit;
-  font-size: 10px;
-  font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
   transition: background .2s, opacity .2s;
+}
+
+.export-button strong {
+  font-size: 11px;
+}
+
+.export-button small {
+  margin-top: 2px;
+  color: rgba(255, 255, 255, .78);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.export-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+}
+
+.export-info {
+  width: 22px;
+  height: 22px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid #cbd7e9;
+  border-radius: 50%;
+  color: var(--blue);
+  background: white;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: help;
+}
+
+.export-info::after {
+  content: attr(data-tooltip);
+  width: 210px;
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 9px);
+  z-index: 20;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: white;
+  background: var(--navy-deep);
+  box-shadow: 0 8px 22px rgba(11, 33, 69, .2);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.5;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity .2s, transform .2s;
+}
+
+.export-info:hover::after,
+.export-info:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .export-button:hover {
@@ -1145,12 +1208,17 @@ a {
 }
 
 .status-badge {
-  padding: 5px 9px;
+  padding: 7px 11px;
   border-radius: 20px;
   color: #147a59;
   background: #e1f6ed;
   font-size: 9px;
   font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge strong {
+  font-weight: 900;
 }
 
 .status-badge.error {
@@ -1207,10 +1275,19 @@ td {
   font-weight: 800;
 }
 
-.camp-cell {
-  color: var(--blue);
+.camp-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: #245fc7;
+  background: #eaf2ff;
+  font-size: 10px;
   font-weight: 800;
   white-space: nowrap;
+}
+
+tbody tr {
+  transition: background-color .2s ease;
 }
 
 tbody tr:last-child td {
@@ -1218,7 +1295,7 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-  background: #fafcff;
+  background: #f8faff;
 }
 
 .table-pagination {
@@ -1257,7 +1334,7 @@ tbody tr:hover {
 }
 
 .table-pagination span {
-  min-width: 48px;
+  min-width: 170px;
   color: var(--muted);
   font-size: 10px;
   font-weight: 800;
@@ -1277,6 +1354,32 @@ tbody tr:hover {
   white-space: nowrap;
   cursor: pointer;
   transition: color .2s, border-color .2s, background .2s;
+}
+
+.consent-status {
+  display: inline-block;
+  min-height: 0;
+  padding: 6px 11px;
+  border: 0;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.consent-status--uploaded {
+  color: #245fc7;
+  background: #eaf2ff;
+}
+
+.consent-status--missing {
+  color: #4b5563;
+  background: #edf0f4;
+}
+
+.download-button.consent-status:hover {
+  color: white;
+  background: var(--blue);
 }
 
 .download-button:hover {
@@ -1478,6 +1581,17 @@ tbody tr:hover {
   .statistics-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .workspace .section-heading {
+    flex-direction: column;
+  }
+
+  .workspace .table-tools {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 2px 0 8px;
+  }
 }
 
 @media (max-width: 760px) {
@@ -1607,6 +1721,7 @@ tbody tr:hover {
   .table-tools,
   .search-field,
   .filter-field,
+  .export-control,
   .export-button {
     width: 100%;
   }
@@ -1614,6 +1729,11 @@ tbody tr:hover {
   .table-tools {
     align-items: stretch;
     flex-direction: column;
+    overflow: visible;
+  }
+
+  .export-button {
+    flex: 1;
   }
 
   .status-badge {

@@ -26,7 +26,7 @@ const pageIndicator = document.querySelector("#pageIndicator");
 const registrationSearch = document.querySelector("#registrationSearch");
 const ageFilter = document.querySelector("#ageFilter");
 const consentFilter = document.querySelector("#consentFilter");
-const exportScope = document.querySelector("#exportScope");
+const campFilter = document.querySelector("#campFilter");
 const exportExcelButton = document.querySelector("#exportExcel");
 const editDialog = document.querySelector("#editDialog");
 const editForm = document.querySelector("#editForm");
@@ -209,6 +209,15 @@ function addCell(row, value, className = "") {
   row.append(cell);
 }
 
+function addCampCell(row, value) {
+  const cell = document.createElement("td");
+  const badge = document.createElement("span");
+  badge.className = "camp-badge";
+  badge.textContent = value || "未指定營隊";
+  cell.append(badge);
+  row.append(cell);
+}
+
 function getConsentFileReference(data) {
   return data.guardianConsentPath ??
     data.consentFilePath ??
@@ -219,19 +228,31 @@ function getConsentFileReference(data) {
     "";
 }
 
-function addConsentCell(row, fileReference) {
+function addConsentCell(row, fileReference, hasConsent) {
   const cell = document.createElement("td");
 
+  if (!hasConsent) {
+    const badge = document.createElement("span");
+    badge.className = "consent-status consent-status--missing";
+    badge.textContent = "未上傳";
+    cell.append(badge);
+    row.append(cell);
+    return;
+  }
+
   if (!fileReference) {
-    cell.textContent = "—";
+    const badge = document.createElement("span");
+    badge.className = "consent-status consent-status--uploaded";
+    badge.textContent = "已上傳";
+    cell.append(badge);
     row.append(cell);
     return;
   }
 
   const button = document.createElement("button");
   button.type = "button";
-  button.className = "download-button";
-  button.textContent = "下載";
+  button.className = "download-button consent-status consent-status--uploaded";
+  button.textContent = "已上傳";
   button.dataset.fileReference = fileReference;
   cell.append(button);
   row.append(cell);
@@ -621,7 +642,7 @@ function renderRegistration(record) {
   } else if (Number.isFinite(numericAge)) {
     ageGroup = numericAge < 18 ? "minor" : "adult";
   }
-  const hasConsent = Boolean(data.hasGuardianConsent ?? consentFileReference);
+  const hasConsent = Boolean(data.hasGuardianConsent || consentFileReference);
 
   row.dataset.search = normalizeSearchValue(
     `${data.name ?? ""} ${data.phone ?? ""} ${data.church ?? ""} ${data.camp ?? ""}`
@@ -634,12 +655,12 @@ function renderRegistration(record) {
   row.dataset.consentStatus = hasConsent ? "uploaded" : "missing";
   addCell(row, "0", "sequence-cell");
   addCell(row, data.name);
-  addCell(row, data.camp || "未指定營隊", "camp-cell");
+  addCampCell(row, data.camp);
   addCell(row, data.gender);
   addCell(row, data.church);
   addCell(row, String(age));
   addCell(row, formatRegistrationDate(registrationDate));
-  addConsentCell(row, consentFileReference);
+  addConsentCell(row, consentFileReference, hasConsent);
   addActionCell(row, id);
   registrationRows.append(row);
 }
@@ -687,6 +708,7 @@ function filterRegistrations(options = {}) {
   const keyword = normalizeSearchValue(registrationSearch.value);
   const selectedAge = ageFilter.value;
   const selectedConsent = consentFilter.value;
+  const selectedCamp = campFilter.value;
   const rows = registrationRows.querySelectorAll("tr");
   const matchedRows = [];
 
@@ -694,7 +716,7 @@ function filterRegistrations(options = {}) {
 
   if (totalRegistrations === 0) {
     tableMessage.textContent = "目前尚無報名資料。";
-    dataStatus.textContent = "0 筆資料";
+    dataStatus.innerHTML = "<strong>0</strong> 筆 / 共 <strong>0</strong> 筆";
     tablePagination.hidden = true;
     exportExcelButton.disabled = true;
     return;
@@ -707,8 +729,12 @@ function filterRegistrations(options = {}) {
       row.dataset.ageGroup === selectedAge;
     const matchesConsent = selectedConsent === "all" ||
       row.dataset.consentStatus === selectedConsent;
+    const matchesCamp = selectedCamp === "all" ||
+      getRecordCamp(record?.data ?? {}) === selectedCamp;
     const matchesDashboard = record ? matchesDashboardFilter(record.data) : false;
-    const matches = matchesSearch && matchesAge && matchesConsent && matchesDashboard;
+    const matches = matchesSearch && matchesAge && matchesConsent &&
+      matchesCamp && matchesDashboard;
+    row.dataset.filterMatch = String(matches);
     row.hidden = true;
     if (matches) matchedRows.push(row);
   });
@@ -723,21 +749,18 @@ function filterRegistrations(options = {}) {
       row.querySelector(".sequence-cell").textContent = pageStart + index + 1;
     });
 
-  tablePagination.hidden = matchedRows.length <= REGISTRATIONS_PER_PAGE;
-  pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+  const pageEnd = Math.min(pageStart + REGISTRATIONS_PER_PAGE, matchedRows.length);
+  tablePagination.hidden = matchedRows.length === 0;
+  pageIndicator.textContent =
+    `顯示第 ${pageStart + 1} - ${pageEnd} 筆，共 ${matchedRows.length} 筆`;
   previousPageButton.disabled = currentPage === 1;
   nextPageButton.disabled = currentPage === totalPages;
 
   tableMessage.textContent = matchedRows.length === 0 && totalRegistrations > 0
     ? "找不到符合搜尋條件的報名資料。"
     : "";
-  const hasActiveFilter = keyword ||
-    selectedAge !== "all" ||
-    selectedConsent !== "all" ||
-    dashboardFilter !== "all";
-  dataStatus.textContent = hasActiveFilter
-    ? `${matchedRows.length} / ${totalRegistrations} 筆`
-    : `${totalRegistrations} 筆資料`;
+  dataStatus.innerHTML =
+    `<strong>${matchedRows.length}</strong> 筆 / 共 <strong>${totalRegistrations}</strong> 筆`;
   exportExcelButton.disabled = totalRegistrations === 0;
 }
 
@@ -752,13 +775,14 @@ function serializeExcelValue(value) {
 function exportCompleteRegistrations() {
   if (registrationRecords.length === 0) return;
 
-  const selectedScope = exportScope.value;
-  const recordsToExport = selectedScope === "all"
-    ? registrationRecords
-    : registrationRecords.filter(({ data }) => getRecordCamp(data) === selectedScope);
+  const tableRows = [...registrationRows.querySelectorAll("tr")];
+  const recordsToExport = registrationRecords.filter(({ id }) => {
+    const row = tableRows.find(item => item.dataset.documentId === id);
+    return row?.dataset.filterMatch === "true";
+  });
 
   if (recordsToExport.length === 0) {
-    window.alert(`目前沒有「${selectedScope}」的報名資料。`);
+    window.alert("目前篩選條件下沒有可匯出的報名資料。");
     return;
   }
 
@@ -789,7 +813,7 @@ function exportCompleteRegistrations() {
 
   const worksheet = utils.json_to_sheet(exportData);
   const workbook = utils.book_new();
-  const scopeLabel = selectedScope === "all" ? "全部資料" : selectedScope;
+  const scopeLabel = campFilter.value === "all" ? "目前篩選結果" : campFilter.value;
   utils.book_append_sheet(workbook, worksheet, scopeLabel);
 
   const date = new Intl.DateTimeFormat("sv-SE").format(new Date());
@@ -932,6 +956,7 @@ async function loadRegistrations() {
 registrationSearch.addEventListener("input", filterRegistrations);
 ageFilter.addEventListener("change", filterRegistrations);
 consentFilter.addEventListener("change", filterRegistrations);
+campFilter.addEventListener("change", filterRegistrations);
 previousPageButton.addEventListener("click", () => {
   if (currentPage <= 1) return;
   currentPage -= 1;

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>管理後台｜Kilaing tjai Yisu</title>
-  <link rel="stylesheet" href="./admin.css?v=20260706-16">
+  <link rel="stylesheet" href="./admin.css?v=20260706-17">
 </head>
 <body hidden>
   <div class="admin-layout">
@@ -176,18 +176,22 @@
                 <option value="missing">未上傳同意書</option>
               </select>
             </label>
-            <label class="filter-field export-scope-field">
-              <span class="sr-only">選擇 Excel 匯出範圍</span>
-              <select id="exportScope">
-                <option value="all">全部資料</option>
+            <label class="filter-field camp-filter-field">
+              <span class="sr-only">依報名營隊篩選</span>
+              <select id="campFilter">
+                <option value="all">全部營隊</option>
                 <option value="青年領袖營">青年領袖營</option>
                 <option value="暑期兒童營">暑期兒童營</option>
               </select>
             </label>
-            <button class="export-button" id="exportExcel" type="button" disabled>
-              匯出 Excel
-            </button>
-            <span class="status-badge" id="dataStatus">讀取中</span>
+            <div class="export-control">
+              <button class="export-button" id="exportExcel" type="button" disabled>
+                <strong>匯出文件</strong>
+                <small>匯出目前篩選結果</small>
+              </button>
+              <span class="export-info" tabindex="0" aria-label="匯出說明" data-tooltip="會依照目前搜尋與篩選條件匯出資料">i</span>
+            </div>
+            <span class="status-badge" id="dataStatus"><strong>0</strong> 筆 / 共 <strong>0</strong> 筆</span>
           </div>
         </div>
 
@@ -300,6 +304,6 @@
       </div>
     </form>
   </dialog>
-  <script type="module" src="./admin.js?v=20260706-16"></script>
+  <script type="module" src="./admin.js?v=20260706-17"></script>
 </body>
 </html>
