@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://kilaingtjaiyisu2026.netlify.app/sitemap.xml
