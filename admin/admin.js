@@ -167,11 +167,15 @@ function normalizeSearchValue(value) {
 }
 
 function getRecordCamp(data) {
-  return data.camp ?? "";
+  return String(data.camp ?? "").trim();
 }
 
 function getCampRecords(campName) {
   return registrationRecords.filter(({ data }) => getRecordCamp(data) === campName);
+}
+
+function requiresTransport(data) {
+  return String(data.transport ?? "").trim() === "需接送";
 }
 
 function countByField(records, field) {
@@ -266,8 +270,8 @@ function calculateDashboardStatistics() {
   return {
     youthCount: youthRecords.length,
     childCount: childRecords.length,
-    youthTransport: countByField(youthRecords, "transport").需接送 ?? 0,
-    childTransport: countByField(childRecords, "transport").需接送 ?? 0,
+    youthTransport: youthRecords.filter(({ data }) => requiresTransport(data)).length,
+    childTransport: childRecords.filter(({ data }) => requiresTransport(data)).length,
     youthDietTotal: youthRecords.length,
     childDietTotal: childRecords.length,
     youthShirtTotal: youthRecords.length,
@@ -460,10 +464,10 @@ function matchesDashboardFilter(data) {
     return getRecordCamp(data) === CHILD_CAMP;
   }
   if (dashboardFilter === "youthTransport") {
-    return getRecordCamp(data) === YOUTH_CAMP && data.transport === "需接送";
+    return getRecordCamp(data) === YOUTH_CAMP && requiresTransport(data);
   }
   if (dashboardFilter === "childTransport") {
-    return getRecordCamp(data) === CHILD_CAMP && data.transport === "需接送";
+    return getRecordCamp(data) === CHILD_CAMP && requiresTransport(data);
   }
   return true;
 }

@@ -368,6 +368,10 @@ a {
   border: 1.5px solid rgba(167, 139, 250, .18);
 }
 
+.stat-card--shirt .stat-label {
+  white-space: nowrap;
+}
+
 .stat-card--shirt:hover,
 .stat-card--shirt.is-active {
   border-color: #a78bfa;
