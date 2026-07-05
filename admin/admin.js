@@ -309,27 +309,16 @@ function renderMiniAnalytics() {
     const distribution = isYouth
       ? dashboardStatistics.youthDietDistribution
       : dashboardStatistics.childDietDistribution;
-    const total = Object.values(distribution).reduce((sum, count) => sum + count, 0);
-    const track = document.createElement("span");
-    track.className = "mini-diet-track";
-    const legend = document.createElement("span");
-    legend.className = "mini-diet-legend";
-
-    Object.entries(distribution).forEach(([label, count]) => {
-      const percentage = total ? Math.round((count / total) * 1000) / 10 : 0;
-      const type = label === "葷食" ? "meat" : label === "素食" ? "veg" : "other";
-      const segment = document.createElement("i");
-      segment.className = `mini-diet-segment mini-diet-segment--${type}`;
-      segment.style.setProperty("--segment-width", `${percentage}%`);
-      track.append(segment);
-
-      const item = document.createElement("span");
-      item.className = "mini-diet-item";
-      item.innerHTML = `<b></b><small>${count} (${percentage}%)</small>`;
-      item.querySelector("b").textContent = label;
-      legend.append(item);
+    const maximum = Math.max(...Object.values(distribution), 1);
+    container.replaceChildren();
+    Object.entries(distribution).forEach(([rawLabel, count]) => {
+      const row = document.createElement("span");
+      row.className = "mini-bar-row mini-bar-row--diet";
+      row.innerHTML = `<b></b><i><em style="--mini-width:0%"></em></i><small>${count}</small>`;
+      row.querySelector("b").textContent = rawLabel === "其他" ? "特殊" : rawLabel;
+      row.querySelector("em").dataset.targetWidth = `${(count / maximum) * 100}%`;
+      container.append(row);
     });
-    container.replaceChildren(track, legend);
   });
 
   document.querySelectorAll("[data-mini-shirt]").forEach(container => {
@@ -340,11 +329,18 @@ function renderMiniAnalytics() {
     const maximum = Math.max(...Object.values(distribution), 1);
     container.replaceChildren();
     SHIRT_SIZES.forEach(size => {
-      const item = document.createElement("span");
-      item.className = "mini-size-item";
-      item.innerHTML = `<i><em style="--mini-width:${(distribution[size] / maximum) * 100}%"></em></i><b>${size}</b><small>${distribution[size]}</small>`;
-      item.title = `${size}：${distribution[size]} 人`;
-      container.append(item);
+      const row = document.createElement("span");
+      row.className = "mini-bar-row mini-bar-row--shirt";
+      row.innerHTML = `<b>${size}</b><i><em style="--mini-width:0%"></em></i><small>${distribution[size]}</small>`;
+      row.querySelector("em").dataset.targetWidth = `${(distribution[size] / maximum) * 100}%`;
+      row.title = `${size}：${distribution[size]} 人`;
+      container.append(row);
+    });
+  });
+
+  requestAnimationFrame(() => {
+    document.querySelectorAll(".mini-bar-row em").forEach(bar => {
+      bar.style.setProperty("--mini-width", bar.dataset.targetWidth);
     });
   });
 }
