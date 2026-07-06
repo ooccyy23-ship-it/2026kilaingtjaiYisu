@@ -38,6 +38,25 @@ const defaultRegistrationOpenSettings = Object.freeze({
 });
 const registrationSettingsRef = doc(db, "siteSettings", "registrationOpen");
 
+function syncRegistrationPanelHeight() {
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    form.style.removeProperty("--registration-panel-height");
+    return;
+  }
+
+  const activitySection = form.querySelectorAll(".form-section-title")[2];
+  if (!activitySection) return;
+
+  const formRect = form.getBoundingClientRect();
+  const activityRect = activitySection.getBoundingClientRect();
+  const desiredHeight =
+    activityRect.top - formRect.top + form.scrollTop + 2;
+  form.style.setProperty(
+    "--registration-panel-height",
+    `${Math.ceil(desiredHeight)}px`
+  );
+}
+
 function applyRegistrationOpenSettings(settings) {
   const campSettings = {
     青年領袖營: settings.youthCamp,
@@ -453,3 +472,6 @@ document.querySelectorAll(".faq-list details").forEach(item => {
 
 restoreDraft();
 listenForRegistrationOpenSettings();
+requestAnimationFrame(syncRegistrationPanelHeight);
+window.addEventListener("load", syncRegistrationPanelHeight);
+window.addEventListener("resize", syncRegistrationPanelHeight);
