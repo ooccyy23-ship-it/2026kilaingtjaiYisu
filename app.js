@@ -39,8 +39,9 @@ const defaultRegistrationOpenSettings = Object.freeze({
 const registrationSettingsRef = doc(db, "siteSettings", "registrationOpen");
 
 function syncRegistrationPanelHeight() {
+  const registrationLayout = form.closest(".registration-layout");
   if (window.matchMedia("(max-width: 900px)").matches) {
-    form.style.removeProperty("--registration-panel-height");
+    registrationLayout?.style.removeProperty("--registration-panel-height");
     return;
   }
 
@@ -51,7 +52,7 @@ function syncRegistrationPanelHeight() {
   const activityRect = activitySection.getBoundingClientRect();
   const desiredHeight =
     activityRect.top - formRect.top + form.scrollTop + 2;
-  form.style.setProperty(
+  registrationLayout?.style.setProperty(
     "--registration-panel-height",
     `${Math.ceil(desiredHeight)}px`
   );
