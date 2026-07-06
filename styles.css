@@ -111,9 +111,14 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .steps li:not(:last-child)::after { content: ""; height: 1px; background: rgba(255,255,255,.2); position: absolute; left: 70%; right: 10%; top: 26px; }
 .steps li>span { flex: 0 0 52px; height: 52px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; color: var(--lime); font: 700 18px Outfit; }
 .steps strong,.steps small { display:block; }.steps strong { font-size: var(--text-body); }.steps small { color: #9eb1aa; font-size: 13px; }
-.register-section { display: grid; grid-template-columns: .72fr 1.28fr; gap: 80px; background: #eef1e5; align-items: start; }
-.form-intro { position: sticky; top: 120px; }.form-intro>p:not(.eyebrow) { color: var(--muted); margin: 25px 0 35px; }
-.contact-card { display:grid; grid-template-columns:104px minmax(0,1fr); align-items:center; gap:17px; padding:15px; border:1px solid rgba(37,99,235,.12); border-radius:18px; background:rgba(255,255,255,.72); box-shadow:0 12px 30px rgba(33,77,150,.08); }.contact-card>img { width:104px; aspect-ratio:1; display:block; object-fit:cover; object-position:center 28%; border:3px solid white; border-radius:16px; box-shadow:0 7px 18px rgba(24,74,105,.14); }.contact-details { min-width:0; display:flex; flex-direction:column; align-items:flex-start; }.contact-card span,.contact-card small { font-size:var(--text-caption); color:var(--muted); }.contact-card strong { margin-top:2px; font-size:var(--text-body); }.contact-card a { color:var(--green); font:700 21px Outfit; margin:5px 0 1px; white-space:nowrap; }
+.register-section { display:grid; grid-template-columns:minmax(320px,350px) minmax(0,1fr); gap:clamp(28px,4vw,52px); align-items:start; background:#eef1e5; }
+.form-intro { height:calc(100vh - 48px); position:sticky; top:24px; padding:24px; border-radius:20px; background:linear-gradient(145deg,#f7f7ed,#eef4e8); box-shadow:0 16px 42px rgba(40,72,54,.1); overflow-y:auto; scrollbar-width:thin; scrollbar-color:#c5d3c4 transparent; }
+.form-intro-heading { margin-bottom:16px; }.form-intro-heading h2 { margin:0; color:#183326; font-size:clamp(21px,2vw,27px); line-height:1.45; letter-spacing:-.025em; }.form-intro-heading>p:last-child { margin:8px 0 0; color:var(--muted); font-size:12px; line-height:1.7; }
+.form-info-card { margin-top:12px; padding:14px 15px; border:1px solid rgba(45,91,61,.09); border-radius:15px; background:rgba(255,255,255,.8); box-shadow:0 7px 20px rgba(45,72,52,.055); }.form-info-card h3,.info-card-title { margin:0 0 9px; color:#285f32; font-size:13px; font-weight:800; }.form-info-card h3 span { margin-right:7px; color:#39743f; }
+.contact-card { display:grid; grid-template-columns:76px minmax(0,1fr); align-items:center; gap:13px; }.contact-card>img { width:76px; aspect-ratio:1; display:block; object-fit:cover; object-position:center 28%; border:3px solid white; border-radius:50%; box-shadow:0 6px 16px rgba(24,74,105,.14); }.contact-details { min-width:0; display:flex; flex-direction:column; align-items:flex-start; }.contact-card .info-card-title,.contact-card small { color:var(--muted); font-size:10px; }.contact-card .info-card-title { color:#285f32; font-size:12px; }.contact-card strong { margin-top:1px; font-size:13px; }.contact-card a { margin:3px 0 1px; color:var(--green); font:700 18px Outfit; white-space:nowrap; }
+.camp-info-brief + .camp-info-brief { margin-top:11px; padding-top:10px; border-top:1px solid rgba(45,91,61,.12); }.camp-label { display:inline-block; margin-bottom:5px; font-size:11px; }.camp-label-youth { color:#2563a9; }.camp-label-child { color:#c66b22; }.camp-info-brief p { display:grid; grid-template-columns:65px minmax(0,1fr); gap:6px; margin:3px 0; color:var(--muted); font-size:10px; }.camp-info-brief b { color:var(--ink); font-weight:700; }
+.info-check-list { display:grid; gap:6px; margin:0; padding:0; list-style:none; }.info-check-list li { position:relative; padding-left:17px; color:#43534a; font-size:10px; line-height:1.55; }.info-check-list li::before { content:"✓"; position:absolute; left:0; top:0; color:#39743f; font-weight:900; }
+.registration-form { max-height:calc(100vh - 48px); overflow-y:auto; scrollbar-width:thin; scrollbar-color:#9ca59f transparent; }
 .registration-form { background: var(--paper); border-radius: 18px; padding: clamp(24px,4vw,48px); box-shadow: var(--shadow); }
 .form-top { display: flex; justify-content: space-between; align-items: start; padding-bottom: 28px; border-bottom: 1px solid var(--line); margin-bottom: 30px; }
 .form-top h3 { margin: 5px 0 0; font-size: 25px; }.form-step { color: var(--green); font: 700 var(--text-caption) Outfit; letter-spacing: .15em; }.save-status { color: var(--muted); font-size: var(--text-caption); background: #f2f1e9; padding: 5px 9px; border-radius: 20px; }
@@ -363,5 +368,15 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
   .full-schedule-list,.schedule-camp-grid { grid-template-columns:1fr; }
   .schedule-camp-card { padding:24px; }
   .series-card-grid { grid-template-columns:1fr; }
+}
+@media (max-width: 900px) {
+  .register-section { grid-template-columns:1fr; gap:28px; }
+  .form-intro { width:100%; height:auto; max-height:none; position:static; padding:22px; overflow:visible; }
+  .registration-form { max-height:none; overflow:visible; }
+}
+@media (max-width: 600px) {
+  .form-intro { padding:18px; border-radius:18px; }
+  .form-intro-heading h2 { font-size:22px; }
+  .form-info-card { padding:13px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } *,*::before,*::after { transition:none!important; } }
