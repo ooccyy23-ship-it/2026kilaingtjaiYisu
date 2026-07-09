@@ -140,7 +140,7 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .site-footer { padding:52px max(36px,calc((100% - 1180px)/2)) 24px; display:grid; grid-template-columns:minmax(300px,35%) minmax(0,1fr); gap:clamp(40px,5vw,72px); color:#fff8ec; background:linear-gradient(135deg,#173f55 0%,#1b4961 52%,#12364b 100%); border-top:4px solid #d3a247; font-size:var(--text-small); }
 .footer-column { min-width:0; display:flex; flex-direction:column; align-items:flex-start; text-align:left; }
 .footer-column>strong { margin-bottom:18px; color:#d3a247; font-size:15px; letter-spacing:.08em; }
-.footer-links-grid { min-width:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(24px,3vw,44px); }
+.footer-links-grid { min-width:0; display:grid; grid-template-columns:.82fr .95fr 1.28fr; gap:clamp(24px,3vw,44px); }
 .footer-brand { display:inline-flex; align-items:center; gap:14px; }
 .footer-brand img { width:64px; height:64px; display:block; object-fit:contain; border-radius:50%; background:#fffdf8; }
 .footer-brand-copy { display:flex; flex-direction:column; }
