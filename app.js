@@ -15,6 +15,10 @@ import { db, storage } from "./firebase.js";
 const form = document.querySelector("#registrationForm");
 const modal = document.querySelector("#successModal");
 const closeModalButton = document.querySelector("#closeModal");
+const legalModal = document.querySelector("#legalModal");
+const closeLegalModalButton = document.querySelector("#closeLegalModal");
+const legalModalTitle = document.querySelector("#legalModalTitle");
+const legalModalBody = document.querySelector("#legalModalBody");
 const submitButton = form.querySelector(".submit-button");
 const saveStatus = document.querySelector("#saveStatus");
 const birthDate = document.querySelector("#birthDate");
@@ -37,6 +41,56 @@ const defaultRegistrationOpenSettings = Object.freeze({
   kidsCamp: true,
 });
 const registrationSettingsRef = doc(db, "siteSettings", "registrationOpen");
+const legalContents = {
+  privacy: {
+    title: "隱私權與個人資料蒐集告知",
+    body: `
+      <p>東部排灣中會青年大專部（以下簡稱本單位）為辦理「2026 第五屆 Kilaing tjai Yisu－作和平的使者」系列活動，依個人資料保護法相關規定，向您告知下列事項：</p>
+      <h3>一、蒐集目的</h3>
+      <p>所蒐集的資料僅用於活動報名、身分確認、保險辦理、住宿與接送安排、飲食需求、緊急聯絡、活動通知、行政管理及成果統計。</p>
+      <h3>二、蒐集資料類別</h3>
+      <p>可能包含姓名、出生日期、性別、身分證字號、聯絡方式、所屬教會、衣服尺寸、飲食與接送需求、緊急聯絡人資料，以及家長或法定代理人同意書等活動所需資料。</p>
+      <h3>三、資料利用期間、地區、對象及方式</h3>
+      <ul>
+        <li>利用期間：自報名日起至活動相關行政、保險及法定保存作業完成為止。</li>
+        <li>利用地區：中華民國境內。</li>
+        <li>利用對象：本單位、活動工作人員，以及辦理保險或活動所必要的合作單位。</li>
+        <li>利用方式：以電子或紙本方式進行蒐集、處理、聯繫、統計及保管。</li>
+      </ul>
+      <p>除依法令規定、活動執行必要或經當事人同意外，本單位不會將個人資料提供予其他第三人或用於活動以外的用途。</p>
+      <h3>四、當事人權利</h3>
+      <p>您可以依法向本單位提出查詢、閱覽、製作複本、補充、更正、停止蒐集、停止處理或利用，以及刪除個人資料的要求。</p>
+      <h3>五、不提供資料的影響</h3>
+      <p>您可以自由選擇是否提供個人資料；但若未提供活動報名、保險或安全管理所需的必要資料，可能無法完成報名或參加活動。</p>
+      <h3>六、未成年人資料</h3>
+      <p>未成年參加者應由家長或法定代理人確認報名內容並提供同意。家長或法定代理人填寫及送出資料，即表示已閱讀並了解本告知內容。</p>
+      <h3>七、聯絡方式</h3>
+      <p>如需查詢、更正或申請停止利用個人資料，請聯絡活動承辦窗口：</p>
+      <p>東部排灣中會青年大專部<br>電子信箱：<a href="mailto:cpcyouth2026@gmail.com">cpcyouth2026@gmail.com</a></p>
+    `,
+  },
+  terms: {
+    title: "網站使用與活動資訊聲明",
+    body: `
+      <h3>一、網站用途</h3>
+      <p>本網站為「2026 第五屆 Kilaing tjai Yisu－作和平的使者」系列活動資訊及報名網站，由東部排灣中會青年大專部維護，提供青年領袖輔導培訓營與日光暑期兒童營的活動介紹、日程、報名及聯絡資訊。</p>
+      <h3>二、活動資訊</h3>
+      <p>本網站所列日期、地點、講師、課程及活動流程，可能因天候、場地、交通或其他實際情況調整。若有異動，將由主辦單位另行通知，並以主辦單位最新公告為準。</p>
+      <h3>三、報名資料</h3>
+      <p>參加者應確認所填資料正確且完整。因資料錯誤、缺漏或聯絡方式無法使用，導致通知、保險或活動安排受到影響者，主辦單位將依實際情況協助處理。</p>
+      <h3>四、外部連結</h3>
+      <p>本網站可能提供 Google Maps、Instagram 或其他外部網站連結。使用者進入外部網站後，應依該網站的使用條款及隱私權政策辦理。</p>
+      <h3>五、網站內容</h3>
+      <p>本網站中的文字、活動識別、圖像與版面內容，除另有註明外，均供本活動宣傳及資訊使用。未經同意，請勿擅自重製、修改或作其他用途。</p>
+      <h3>六、網站服務</h3>
+      <p>主辦單位將盡力維持網站資訊正確及服務正常，但不保證網站不會因系統維護、網路中斷或其他不可預期因素暫停運作。</p>
+      <h3>七、聯絡方式</h3>
+      <p>如對網站內容、活動資訊或報名資料有疑問，請聯絡：</p>
+      <p>東部排灣中會青年大專部<br>電子信箱：<a href="mailto:cpcyouth2026@gmail.com">cpcyouth2026@gmail.com</a></p>
+    `,
+  },
+};
+let lastLegalTrigger = null;
 
 function syncRegistrationPanelHeight() {
   const registrationLayout = form.closest(".registration-layout");
@@ -462,6 +516,59 @@ function closeModal() {
 closeModalButton.addEventListener("click", closeModal);
 modal.addEventListener("click", event => { if (event.target === modal) closeModal(); });
 document.addEventListener("keydown", event => { if (event.key === "Escape" && !modal.hidden) closeModal(); });
+
+function openLegalModal(type, trigger) {
+  const content = legalContents[type];
+  if (!content || !legalModal) return;
+  lastLegalTrigger = trigger;
+  legalModalTitle.textContent = content.title;
+  legalModalBody.innerHTML = content.body;
+  legalModal.hidden = false;
+  document.body.style.overflow = "hidden";
+  closeLegalModalButton.focus();
+}
+
+function closeLegalModal() {
+  if (!legalModal || legalModal.hidden) return;
+  legalModal.hidden = true;
+  legalModalTitle.textContent = "";
+  legalModalBody.innerHTML = "";
+  document.body.style.overflow = "";
+  if (lastLegalTrigger) lastLegalTrigger.focus();
+  lastLegalTrigger = null;
+}
+
+document.querySelectorAll("[data-legal-modal]").forEach(button => {
+  button.addEventListener("click", () => {
+    openLegalModal(button.dataset.legalModal, button);
+  });
+});
+if (closeLegalModalButton) closeLegalModalButton.addEventListener("click", closeLegalModal);
+if (legalModal) {
+  legalModal.addEventListener("click", event => {
+    if (event.target === legalModal) closeLegalModal();
+  });
+  legalModal.addEventListener("keydown", event => {
+    if (event.key !== "Tab") return;
+    const focusable = legalModal.querySelectorAll(
+      'button, a[href], [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+}
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape") return;
+  if (legalModal && !legalModal.hidden) closeLegalModal();
+});
 
 document.querySelectorAll(".faq-list details").forEach(item => {
   item.addEventListener("toggle", () => {
