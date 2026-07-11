@@ -137,7 +137,7 @@ input:focus,select:focus,textarea:focus { border-color: var(--green); box-shadow
 .submit-button { width: 100%; margin-top: 16px; }.form-note { text-align: center; color: var(--muted); font-size: var(--text-caption); margin: 9px 0 0; }
 .faq-section { display: grid; grid-template-columns: .65fr 1.35fr; gap: 100px; }.faq-title { position: sticky; top: 120px; align-self: start; }.faq-title>p:last-child { color: var(--muted); font-size: 14px; }
 details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-child { border-bottom: 1px solid var(--line); }summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 20px; font-weight: 700; }summary::-webkit-details-marker { display:none; }summary span { font-size: 23px; font-weight: 400; transition: transform .2s; }details[open] summary span { transform: rotate(45deg); }details p { color: var(--muted); font-size: 14px; padding-right: 35px; margin-bottom: 0; }
-.site-footer { padding:52px max(36px,calc((100% - 1180px)/2)) 34px; display:grid; grid-template-columns:minmax(300px,35%) minmax(0,1fr); gap:clamp(40px,5vw,72px); color:#fff8ec; background:linear-gradient(135deg,#173f55 0%,#1b4961 52%,#12364b 100%); border-top:4px solid #d3a247; font-size:var(--text-small); }
+.site-footer { padding:52px max(36px,calc((100% - 1180px)/2)) 36px; display:grid; grid-template-columns:minmax(300px,35%) minmax(0,1fr); column-gap:clamp(40px,5vw,72px); row-gap:0; color:#fff8ec; background:linear-gradient(135deg,#173f55 0%,#1b4961 52%,#12364b 100%); border-top:4px solid #d3a247; font-size:var(--text-small); }
 .footer-column { min-width:0; display:flex; flex-direction:column; align-items:flex-start; text-align:left; }
 .footer-column>strong { margin-bottom:18px; color:#d3a247; font-size:15px; letter-spacing:.08em; }
 .footer-links-grid { min-width:0; display:grid; grid-template-columns:.82fr .95fr 1.28fr; gap:clamp(24px,3vw,44px); }
@@ -161,7 +161,8 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .footer-contact-item .footer-link-icon { color:#d3a247; }
 .footer-contact-separator { width:100%; max-width:280px; height:1px; margin:12px 0 4px; background:linear-gradient(90deg,rgba(211,162,71,.62),rgba(211,162,71,.06)); }
 .footer-nav-column a:hover,.footer-camp-column a:hover,.footer-contact-column a:hover { color:#fff8ec; }
-.footer-legal-links { grid-column:1/-1; display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin:-4px 0 0; padding-bottom:8px; color:#9fb2b8; font-size:12px; }
+.footer-bottom { grid-column:1/-1; display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:44px; padding-top:38px; border-top:1px solid rgba(211,162,71,.22); text-align:center; }
+.footer-legal-links { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin:0; color:#90a8b0; font-size:12px; }
 .footer-legal-links button { appearance:none; border:0; padding:0; color:inherit; background:transparent; font:inherit; cursor:pointer; transition:color .2s ease; }
 .footer-legal-links button:hover,.footer-legal-links button:focus-visible { color:#d3a247; outline:none; }
 .legal-modal { position:fixed; inset:0; z-index:60; display:grid; place-items:center; padding:20px; background:rgba(10,34,28,.72); backdrop-filter:blur(5px); }
@@ -326,7 +327,7 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .guardian-actions { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10px; align-items: end; }.download-placeholder { height: 45px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--green); border-radius: 8px; color: var(--green); background: white; cursor: pointer; font-weight: 700; font-size: var(--text-small); }
 .upload-control span { display: block; margin-bottom: 4px; font-size: var(--text-caption); font-weight: 700; }.upload-control b { color: #c34e3f; }.upload-control input { padding: 7px; font-size: var(--text-caption); }.guardian-panel>div>small { color: var(--muted); font-size: 11px; }
 @media (max-width:600px) { .guardian-panel { grid-template-columns:1fr; }.guardian-badge { width:fit-content; }.guardian-actions { grid-template-columns:1fr; } }
-.copyright { grid-column:1/-1; margin:4px 0 0; padding-top:20px; border-top:1px solid rgba(211,162,71,.22); color:#9fb2b8; text-align:center; font-size:var(--text-caption); }
+.copyright { margin:0; color:#9fb2b8; text-align:center; font-size:var(--text-caption); }
 .success-modal { position: fixed; inset: 0; z-index: 50; background: rgba(10,34,28,.7); display: grid; place-items: center; padding: 20px; backdrop-filter: blur(5px); }.success-modal[hidden] { display:none; }.modal-card { max-width: 440px; background: var(--paper); border-radius: 20px; padding: 45px; text-align: center; box-shadow: var(--shadow); }.success-icon { width: 58px; height: 58px; margin: 0 auto 20px; display:grid; place-items:center; border-radius:50%; background: var(--lime); font-size: 27px; }.modal-card h2 { margin: 5px 0 10px; line-height:1.35; }.modal-card>p:not(.eyebrow) { color:var(--muted); }.modal-card .button { margin-top:15px; width:100%; }
 @media (max-width: 900px) {
   .desktop-nav { display:none; }.schedule-camp-card li { grid-template-columns:34px 55px 1fr; }.schedule-camp-card li small { grid-column:3; }.quick-facts { margin-inline:22px; grid-template-columns:1fr 1fr; }.quick-facts>div { padding:14px; }.quick-facts>div:nth-child(2) { border-right:0; }.quick-facts>div:nth-child(-n+2) { border-bottom:1px solid var(--line); }
@@ -399,7 +400,8 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
   .form-intro-heading h2 { font-size:22px; }
   .form-info-card { padding:13px; }
   .footer-links-grid { grid-template-columns:1fr; gap:28px; }
-  .footer-legal-links { gap:6px 8px; padding-bottom:4px; line-height:1.8; }
+  .footer-bottom { margin-top:34px; padding-top:30px; }
+  .footer-legal-links { gap:6px 8px; line-height:1.8; }
   .legal-modal { padding:14px; align-items:center; }
   .legal-modal-card { width:100%; max-height:calc(100vh - 28px); padding:26px 20px 22px; border-radius:18px; }
   .legal-modal-card h2 { margin-right:36px; }
