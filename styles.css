@@ -79,13 +79,20 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .series-card h3 { margin:0; font-size:24px; line-height:1.35; }
 .series-card p { margin:10px 0 0; color:var(--muted); font-weight:700; }
 .camp-info-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:stretch; text-align:left; }
-.camp-info-card { height:100%; padding: 26px; border: 1px solid var(--line); border-radius: 18px; background: white; box-shadow: 0 12px 35px rgba(33,77,150,.07); }
+.camp-info-card { height:100%; padding:0; overflow:hidden; display:flex; flex-direction:column; border: 1px solid var(--line); border-radius: 18px; background: white; box-shadow: 0 12px 35px rgba(33,77,150,.07); }
 .camp-info-card.primary { border-top: 4px solid var(--green); }.camp-info-card.secondary { border-top: 4px solid #f09b31; }
+.camp-info-photo { width:100%; aspect-ratio:16/6; object-fit:cover; display:block; border-radius:14px 14px 0 0; }
+.camp-info-content { flex:1; display:flex; flex-direction:column; padding:24px 32px 28px; }
 .camp-tag { display: inline-block; padding: 4px 9px; border-radius: 20px; color: var(--green); background: #edf1e5; font-size: var(--text-caption); font-weight: 800; }
 .camp-info-card.secondary .camp-tag { color: #a65b00; background: #fff1dc; }
-.camp-info-card h3 { margin: 10px 0 15px; font: 800 24px Outfit,"Noto Sans TC"; }
-.camp-info-card dl { margin: 0; }.camp-info-card dl>div { display: grid; grid-template-columns: 48px 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: var(--text-small); }
-.camp-info-card dt { color: var(--muted); }.camp-info-card dd { margin: 0; font-weight: 600; }
+.camp-info-card h3 { margin:10px 0 15px; font:800 clamp(22px,2.2vw,24px) Outfit,"Noto Sans TC"; line-height:1.25; }
+.camp-info-card dl { margin:0; }
+.camp-info-card dl>div { display:grid; grid-template-columns:30px 58px minmax(0,1fr); column-gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:var(--text-small); }
+.camp-info-icon { width:30px; height:30px; flex:0 0 30px; border-radius:50%; display:grid; place-items:center; background:#347e91; }
+.camp-info-card.secondary .camp-info-icon { background:#de8d2b; }
+.camp-info-icon svg { width:14px; height:14px; fill:none; stroke:#fff; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.camp-info-card dt { color:var(--muted); font-size:14px; font-weight:700; }
+.camp-info-card dd { min-width:0; margin:0; color:var(--ink); font-weight:700; overflow-wrap:anywhere; }
 .map-link { width:fit-content; display:flex; align-items:center; gap:5px; margin-top:7px; color:#285f80; font-size:14px; font-weight:500; text-decoration:none; transition:color .2s ease; }
 .map-link span { transition:transform .2s ease; }
 .map-link:hover { color:#174968; text-decoration:underline; }
@@ -331,7 +338,7 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
 .success-modal { position: fixed; inset: 0; z-index: 50; background: rgba(10,34,28,.7); display: grid; place-items: center; padding: 20px; backdrop-filter: blur(5px); }.success-modal[hidden] { display:none; }.modal-card { max-width: 440px; background: var(--paper); border-radius: 20px; padding: 45px; text-align: center; box-shadow: var(--shadow); }.success-icon { width: 58px; height: 58px; margin: 0 auto 20px; display:grid; place-items:center; border-radius:50%; background: var(--lime); font-size: 27px; }.modal-card h2 { margin: 5px 0 10px; line-height:1.35; }.modal-card>p:not(.eyebrow) { color:var(--muted); }.modal-card .button { margin-top:15px; width:100%; }
 @media (max-width: 900px) {
   .desktop-nav { display:none; }.schedule-camp-card li { grid-template-columns:34px 55px 1fr; }.schedule-camp-card li small { grid-column:3; }.quick-facts { margin-inline:22px; grid-template-columns:1fr 1fr; }.quick-facts>div { padding:14px; }.quick-facts>div:nth-child(2) { border-right:0; }.quick-facts>div:nth-child(-n+2) { border-bottom:1px solid var(--line); }
-  .section-heading,.register-section,.faq-section { grid-template-columns:1fr; gap:45px; }.feature-grid,.feature-grid.training-grid,.journey-grid { grid-template-columns:1fr 1fr; }.camp-info-grid { grid-template-columns:1fr; max-width:680px; margin-inline:auto; }.schedule-grid { grid-template-columns:1fr; max-width:620px; margin-inline:auto; }.day-card { min-height:auto; }.steps { grid-template-columns:1fr 1fr; gap:28px; }.steps li::after { display:none; }.form-intro,.faq-title { position:static; }
+  .section-heading,.register-section,.faq-section { grid-template-columns:1fr; gap:45px; }.feature-grid,.feature-grid.training-grid,.journey-grid { grid-template-columns:1fr 1fr; }.schedule-grid { grid-template-columns:1fr; max-width:620px; margin-inline:auto; }.day-card { min-height:auto; }.steps { grid-template-columns:1fr 1fr; gap:28px; }.steps li::after { display:none; }.form-intro,.faq-title { position:static; }
 }
 @media (max-width: 768px) {
   html,
@@ -366,6 +373,12 @@ details { border-top: 1px solid var(--line); padding: 21px 0; }details:last-chil
     display:none !important;
   }
   .camp-info-grid,.schedule-camp-grid { grid-template-columns:1fr; gap:24px; }
+  .camp-info-content { padding:20px 18px 22px; }
+  .camp-info-card dl>div { grid-template-columns:28px 48px minmax(0,1fr); column-gap:9px; padding:9px 0; }
+  .camp-info-icon { width:28px; height:28px; flex-basis:28px; }
+  .camp-info-icon svg { width:13px; height:13px; }
+  .camp-info-card h3 { font-size:clamp(20px,6vw,24px); }
+  .camp-info-card dt,.camp-info-card dd,.map-link { font-size:clamp(13px,3.6vw,15px); }
   .camp-info-card,.journey-card,.schedule-camp-card,.feature-card,.day-card,.contact-card,.registration-form,.modal-card { width:100%; max-width:100%; min-width:0; }
   .button:not(.button-small) { min-height:56px; font-size:18px; }
   .contact-card { grid-template-columns:84px minmax(0,1fr); gap:12px; padding:12px; }
