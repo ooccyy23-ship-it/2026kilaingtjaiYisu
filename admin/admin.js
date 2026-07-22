@@ -124,7 +124,7 @@ async function saveRegistrationOpenSettings() {
     await setDoc(registrationSettingsRef, {
       ...settings,
       updatedAt: serverTimestamp(),
-    }, { merge: true });
+    });
   } catch (error) {
     console.error("報名開放設定儲存失敗：", error);
     renderRegistrationOpenSettings(lastRegistrationOpenSettings);
