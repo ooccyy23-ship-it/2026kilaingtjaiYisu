@@ -35,7 +35,7 @@ service cloud.firestore {
         ])
         && request.resource.data.youthCamp is bool
         && request.resource.data.kidsCamp is bool
-        && request.resource.data.updatedAt == request.time;
+        && request.resource.data.updatedAt is timestamp;
     }
 
     function hasValidRegistrationFields() {
@@ -85,7 +85,7 @@ service cloud.firestore {
         && request.resource.data.transportOther is string
         && request.resource.data.diet is string
         && request.resource.data.dietOther is string
-        && request.resource.data.shirtSize in ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL']
+        && request.resource.data.shirtSize in ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL']
         && request.resource.data.age is int
         && request.resource.data.age >= 0
         && request.resource.data.age <= 120

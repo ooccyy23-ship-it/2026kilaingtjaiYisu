@@ -128,7 +128,7 @@ async function saveRegistrationOpenSettings() {
   } catch (error) {
     console.error("報名開放設定儲存失敗：", error);
     renderRegistrationOpenSettings(lastRegistrationOpenSettings);
-    window.alert("設定儲存失敗，請稍後再試。");
+    window.alert(`設定儲存失敗：${error.code || error.message || "未知錯誤"}。`);
   } finally {
     youthCampToggle.disabled = false;
     kidsCampToggle.disabled = false;
